@@ -1,0 +1,520 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>CS Vision — Interactive Computer Vision</title>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>CS&nbsp;Vision</h1>
+    <span class="sub">Interactive Computer Vision Playground</span>
+  </div>
+  <nav class="primary">
+    <button id="nav-toggle" aria-label="Toggle navigation">☰</button>
+  </nav>
+</header>
+
+<main class="layout">
+  <aside class="sidebar" id="sidebar">
+    <div class="side-section">
+      <h3>Image Pipeline</h3>
+      <ul>
+        <li><a href="#image-formation">1 · Image Formation</a></li>
+        <li><a href="#camera-model">2 · Camera Model</a></li>
+        <li><a href="#image-sensing">3 · Image Sensing</a></li>
+      </ul>
+    </div>
+    <div class="side-section">
+      <h3>Transformations</h3>
+      <ul>
+        <li><a href="#geometric">4 · Geometric</a></li>
+        <li><a href="#intensity">5 · Intensity</a></li>
+        <li><a href="#local">6 · Local (Convolution)</a></li>
+        <li><a href="#fourier">7 · Fourier</a></li>
+      </ul>
+    </div>
+    <div class="side-section">
+      <h3>Classical Vision</h3>
+      <ul>
+        <li><a href="#features">8 · Feature Detectors</a></li>
+        <li><a href="#binary">9 · Binary Objects</a></li>
+      </ul>
+    </div>
+    <div class="side-section">
+      <h3>Deep Learning</h3>
+      <ul>
+        <li><a href="#perceptron">10 · MLP Playground</a></li>
+        <li><a href="#cnn">11 · CNNs</a></li>
+        <li><a href="#architectures">12 · Architectures</a></li>
+        <li><a href="#segmentation">13 · Segmentation</a></li>
+        <li><a href="#detection">14 · Object Detection</a></li>
+      </ul>
+    </div>
+    <div class="side-section">
+      <h3>Modern Topics</h3>
+      <ul>
+        <li><a href="#ssl">15 · Self-Supervised</a></li>
+        <li><a href="#autoencoder">16 · Autoencoders</a></li>
+        <li><a href="#generative">17 · Generative Models</a></li>
+      </ul>
+    </div>
+    <div class="side-section">
+      <h3>Tools</h3>
+      <ul>
+        <li><a href="#image-input">📷 Image Input</a></li>
+        <li><a href="#about">ℹ About</a></li>
+      </ul>
+    </div>
+  </aside>
+
+  <section class="content">
+
+    <!-- HERO -->
+    <section id="hero" class="card hero">
+      <h2>Computer Vision, made interactive.</h2>
+      <p>Every core concept from the course — pinhole cameras to generative models — as a live, in-browser demo. Upload your own image or use the built-in samples, then play with parameters and see the math.</p>
+      <div class="hero-actions">
+        <a class="btn primary" href="#image-formation">Start with Image Formation →</a>
+        <a class="btn" href="#image-input">Load an image</a>
+      </div>
+    </section>
+
+    <!-- GLOBAL IMAGE INPUT -->
+    <section id="image-input" class="card">
+      <h2>📷 Global image input</h2>
+      <p class="muted">Drop or pick an image — every module below will use it. Or pick a built-in sample.</p>
+      <div class="row">
+        <input type="file" id="file-input" accept="image/*" />
+        <button class="btn" data-sample="cameraman">Cameraman</button>
+        <button class="btn" data-sample="checker">Checkerboard</button>
+        <button class="btn" data-sample="gradient">Gradient</button>
+        <button class="btn" data-sample="shapes">Shapes</button>
+        <button class="btn" data-sample="noise">Noise</button>
+      </div>
+      <div class="row">
+        <canvas id="global-canvas" width="320" height="320"></canvas>
+        <div class="meta">
+          <div><b>Dimensions:</b> <span id="img-dims">—</span></div>
+          <div><b>Mean intensity:</b> <span id="img-mean">—</span></div>
+          <div><b>Channels:</b> <span id="img-channels">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 1. IMAGE FORMATION -->
+    <section id="image-formation" class="card">
+      <h2>1 · Image Formation — the pinhole camera</h2>
+      <p>A point <code>P=(X,Y,Z)</code> in 3D projects to image coordinates <code>x = f·X/Z</code>, <code>y = f·Y/Z</code>. Drag the slider to change the focal length and the cube's distance to watch perspective change.</p>
+      <div class="row">
+        <canvas id="pinhole-canvas" width="520" height="320"></canvas>
+        <div class="controls">
+          <label>Focal length f: <input type="range" id="pinhole-f" min="40" max="600" value="200" /></label>
+          <label>Cube Z (depth): <input type="range" id="pinhole-z" min="120" max="1200" value="400" /></label>
+          <label>Cube rotation: <input type="range" id="pinhole-rot" min="0" max="360" value="30" /></label>
+          <div class="formula">x = f·X/Z &nbsp;&nbsp; y = f·Y/Z</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2. CAMERA MODEL -->
+    <section id="camera-model" class="card">
+      <h2>2 · Camera Model — intrinsics & extrinsics</h2>
+      <p>The full projection is <code>x = K · [R | t] · X</code>. Adjust intrinsic matrix K (focal lengths, principal point, skew) and extrinsic rotation/translation, and watch the projection of a 3D scene change.</p>
+      <div class="row">
+        <canvas id="camera-canvas" width="520" height="320"></canvas>
+        <div class="controls">
+          <label>fx: <input type="range" id="cam-fx" min="100" max="800" value="400"/></label>
+          <label>fy: <input type="range" id="cam-fy" min="100" max="800" value="400"/></label>
+          <label>cx (px): <input type="range" id="cam-cx" min="100" max="400" value="260"/></label>
+          <label>cy (px): <input type="range" id="cam-cy" min="50" max="300" value="160"/></label>
+          <label>Skew s: <input type="range" id="cam-s" min="-50" max="50" value="0"/></label>
+          <label>Rotation Y°: <input type="range" id="cam-ry" min="-90" max="90" value="20"/></label>
+          <label>Translation Z: <input type="range" id="cam-tz" min="150" max="1500" value="500"/></label>
+          <div class="matrix" id="cam-matrix"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3. IMAGE SENSING -->
+    <section id="image-sensing" class="card">
+      <h2>3 · Image Sensing — sampling &amp; quantization</h2>
+      <p>Real sensors sample a continuous signal at finite resolution and quantize intensities to a finite number of levels. Reduce the sampling rate or bit depth to see aliasing and posterization appear.</p>
+      <div class="row">
+        <canvas id="sensing-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Spatial sampling: <input type="range" id="sense-sample" min="1" max="32" value="1"/></label>
+          <label>Quantization bits: <input type="range" id="sense-bits" min="1" max="8" value="8"/></label>
+          <label><input type="checkbox" id="sense-bayer"/> Show Bayer pattern</label>
+          <div class="meta">
+            Sampling step: <span id="sense-step">1</span> px ·
+            Levels: <span id="sense-levels">256</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 4. GEOMETRIC TRANSFORMS -->
+    <section id="geometric" class="card">
+      <h2>4 · Geometric Transformations</h2>
+      <p>Each pixel <code>(x,y)</code> maps to <code>(x',y') = T(x,y)</code>. Translation, rotation, scaling, shear, and affine/projective transforms in one place.</p>
+      <div class="row">
+        <canvas id="geom-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Translate X: <input type="range" id="g-tx" min="-100" max="100" value="0"/></label>
+          <label>Translate Y: <input type="range" id="g-ty" min="-100" max="100" value="0"/></label>
+          <label>Rotate °: <input type="range" id="g-rot" min="-180" max="180" value="0"/></label>
+          <label>Scale: <input type="range" id="g-scale" min="20" max="200" value="100"/></label>
+          <label>Shear X: <input type="range" id="g-shx" min="-50" max="50" value="0"/></label>
+          <label>Shear Y: <input type="range" id="g-shy" min="-50" max="50" value="0"/></label>
+          <label>Perspective: <input type="range" id="g-persp" min="-50" max="50" value="0"/></label>
+          <label>Interpolation:
+            <select id="g-interp"><option value="nn">Nearest</option><option value="bilinear" selected>Bilinear</option></select>
+          </label>
+          <div class="matrix" id="g-matrix"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 5. INTENSITY TRANSFORMS -->
+    <section id="intensity" class="card">
+      <h2>5 · Intensity Transformations</h2>
+      <p>Point-wise mappings <code>s = T(r)</code>: negative, log, gamma, contrast stretching, thresholding, histogram equalization. Watch the histogram update live.</p>
+      <div class="row">
+        <canvas id="intensity-canvas" width="320" height="320"></canvas>
+        <canvas id="intensity-hist" width="320" height="180"></canvas>
+        <div class="controls">
+          <label>Operation:
+            <select id="i-op">
+              <option value="identity">Identity</option>
+              <option value="negative">Negative</option>
+              <option value="log">Log</option>
+              <option value="gamma">Gamma</option>
+              <option value="stretch">Contrast Stretch</option>
+              <option value="threshold">Threshold</option>
+              <option value="equalize">Histogram Equalize</option>
+            </select>
+          </label>
+          <label>γ / threshold: <input type="range" id="i-param" min="1" max="500" value="100"/></label>
+          <label>Stretch low: <input type="range" id="i-lo" min="0" max="255" value="20"/></label>
+          <label>Stretch high: <input type="range" id="i-hi" min="0" max="255" value="235"/></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6. LOCAL TRANSFORMS / CONVOLUTION -->
+    <section id="local" class="card">
+      <h2>6 · Local Transformations — Convolution playground</h2>
+      <p>2D convolution <code>(I*K)(x,y) = Σ I(x-i,y-j)·K(i,j)</code>. Choose a kernel or edit values directly. Try Gaussian blur, Sobel edges, Laplacian sharpening, median, bilateral.</p>
+      <div class="row">
+        <canvas id="conv-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Kernel:
+            <select id="k-preset">
+              <option value="identity">Identity</option>
+              <option value="boxblur">Box blur 3×3</option>
+              <option value="gauss3">Gaussian 3×3</option>
+              <option value="gauss5">Gaussian 5×5</option>
+              <option value="sobelx">Sobel X</option>
+              <option value="sobely">Sobel Y</option>
+              <option value="sobelmag">Sobel |∇|</option>
+              <option value="laplacian">Laplacian</option>
+              <option value="sharpen">Sharpen</option>
+              <option value="emboss">Emboss</option>
+              <option value="median">Median 3×3</option>
+              <option value="custom">Custom (edit)</option>
+            </select>
+          </label>
+          <div id="kernel-grid" class="kernel"></div>
+          <label>Apply count: <input type="range" id="k-iter" min="1" max="6" value="1"/></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 7. FOURIER -->
+    <section id="fourier" class="card">
+      <h2>7 · Fourier Transform</h2>
+      <p>The 2D DFT decomposes the image into spatial frequencies. Drag the slider to keep only low or high frequencies — that's exactly what blur and sharpening do under the hood.</p>
+      <div class="row">
+        <canvas id="ft-img" width="256" height="256"></canvas>
+        <canvas id="ft-spec" width="256" height="256"></canvas>
+        <canvas id="ft-recon" width="256" height="256"></canvas>
+        <div class="controls">
+          <label>Filter:
+            <select id="ft-mode">
+              <option value="none">None (full reconstruction)</option>
+              <option value="low">Ideal low-pass</option>
+              <option value="high">Ideal high-pass</option>
+              <option value="bandpass">Band-pass</option>
+              <option value="gaussLow">Gaussian low-pass</option>
+            </select>
+          </label>
+          <label>Cutoff radius: <input type="range" id="ft-r" min="1" max="120" value="30"/></label>
+          <label>Band width: <input type="range" id="ft-bw" min="2" max="60" value="10"/></label>
+          <div class="muted small">Left: input · Middle: log magnitude spectrum · Right: inverse FFT after filtering</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 8. FEATURE DETECTORS -->
+    <section id="features" class="card">
+      <h2>8 · Feature Detectors — edges, corners, blobs</h2>
+      <p>Canny edges, Harris corners, and Difference-of-Gaussians blobs. Each builds on convolution and gradient operators from the previous sections.</p>
+      <div class="row">
+        <canvas id="feat-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Detector:
+            <select id="feat-mode">
+              <option value="sobel">Sobel gradient magnitude</option>
+              <option value="canny">Canny edges (simplified)</option>
+              <option value="harris">Harris corners</option>
+              <option value="dog">DoG blob detector</option>
+            </select>
+          </label>
+          <label>Threshold: <input type="range" id="feat-thresh" min="0" max="255" value="80"/></label>
+          <label>Sigma: <input type="range" id="feat-sigma" min="1" max="40" value="14"/></label>
+          <label>Non-max-suppression: <input type="checkbox" id="feat-nms" checked/></label>
+          <div class="meta">Detected: <span id="feat-count">0</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 9. BINARY OBJECTS -->
+    <section id="binary" class="card">
+      <h2>9 · Binary Object Characterization</h2>
+      <p>Threshold the image, clean it with morphology (erode/dilate/open/close), label connected components, and compute area, perimeter, centroid, and bounding box for each one.</p>
+      <div class="row">
+        <canvas id="bin-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Threshold: <input type="range" id="bin-thresh" min="0" max="255" value="128"/></label>
+          <label>Operation:
+            <select id="bin-morph">
+              <option value="none">Threshold only</option>
+              <option value="erode">Erode</option>
+              <option value="dilate">Dilate</option>
+              <option value="open">Open</option>
+              <option value="close">Close</option>
+            </select>
+          </label>
+          <label>SE size: <input type="range" id="bin-se" min="1" max="9" step="2" value="3"/></label>
+          <label><input type="checkbox" id="bin-invert"/> Invert</label>
+          <label><input type="checkbox" id="bin-label" checked/> Color labels</label>
+          <div id="bin-stats" class="stats"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 10. PERCEPTRON / MLP -->
+    <section id="perceptron" class="card">
+      <h2>10 · Neural network playground (PyTorch-style MLP)</h2>
+      <p>Click to add positive (left button) or negative (right button) points. Train a small MLP live and watch the decision boundary emerge — the foundation of everything that follows.</p>
+      <div class="row">
+        <canvas id="mlp-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Hidden units: <input type="range" id="mlp-h" min="2" max="32" value="8"/></label>
+          <label>Learning rate: <input type="range" id="mlp-lr" min="1" max="500" value="100"/></label>
+          <label>Activation:
+            <select id="mlp-act">
+              <option>relu</option><option>tanh</option><option>sigmoid</option>
+            </select>
+          </label>
+          <label>Dataset:
+            <select id="mlp-data">
+              <option value="manual">Manual</option>
+              <option value="moons">Two moons</option>
+              <option value="xor">XOR</option>
+              <option value="circles">Circles</option>
+            </select>
+          </label>
+          <div class="row">
+            <button class="btn" id="mlp-train">Train</button>
+            <button class="btn" id="mlp-step">Step</button>
+            <button class="btn" id="mlp-reset">Reset</button>
+          </div>
+          <div class="meta">Epoch: <span id="mlp-epoch">0</span> · Loss: <span id="mlp-loss">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 11. CNN -->
+    <section id="cnn" class="card">
+      <h2>11 · CNNs — feature maps live</h2>
+      <p>A CNN is just stacked convolutions, non-linearities, and pooling. Run a small hand-crafted CNN on your image and inspect every activation map.</p>
+      <div class="row">
+        <canvas id="cnn-input" width="160" height="160"></canvas>
+        <div id="cnn-stack" class="cnn-stack"></div>
+        <div class="controls">
+          <label>Conv1 kernel:
+            <select id="cnn-k1">
+              <option value="sobelx">Sobel X</option>
+              <option value="sobely">Sobel Y</option>
+              <option value="gauss3">Gaussian</option>
+              <option value="laplacian">Laplacian</option>
+              <option value="edge">Edge</option>
+            </select>
+          </label>
+          <label>Pooling:
+            <select id="cnn-pool">
+              <option value="max">Max 2×2</option>
+              <option value="avg">Avg 2×2</option>
+            </select>
+          </label>
+          <label>Activation:
+            <select id="cnn-act"><option>relu</option><option>tanh</option><option>none</option></select>
+          </label>
+          <label>Depth (layers): <input type="range" id="cnn-depth" min="1" max="4" value="3"/></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 12. ARCHITECTURES -->
+    <section id="architectures" class="card">
+      <h2>12 · Advanced Architectures</h2>
+      <p>Hover any architecture to see how data flows. Each is rendered as a live SVG diagram with parameters you can scrub.</p>
+      <div class="row">
+        <div class="controls">
+          <label>Architecture:
+            <select id="arch-pick">
+              <option value="lenet">LeNet-5</option>
+              <option value="vgg">VGG block</option>
+              <option value="resnet">ResNet block (residual)</option>
+              <option value="unet">U-Net</option>
+              <option value="transformer">Vision Transformer</option>
+            </select>
+          </label>
+          <label>Input size: <input type="range" id="arch-size" min="32" max="256" step="32" value="128"/></label>
+          <div id="arch-info" class="muted small"></div>
+        </div>
+        <div id="arch-diagram" class="diagram"></div>
+      </div>
+    </section>
+
+    <!-- 13. SEGMENTATION -->
+    <section id="segmentation" class="card">
+      <h2>13 · Segmentation</h2>
+      <p>From simple thresholding to region growing to k-means colour segmentation — the same problem at different levels of sophistication.</p>
+      <div class="row">
+        <canvas id="seg-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Method:
+            <select id="seg-mode">
+              <option value="thresh">Otsu threshold</option>
+              <option value="kmeans">k-means colour</option>
+              <option value="region">Region growing (click seed)</option>
+              <option value="edge">Edge-based</option>
+            </select>
+          </label>
+          <label>k (clusters): <input type="range" id="seg-k" min="2" max="8" value="3"/></label>
+          <label>Tolerance: <input type="range" id="seg-tol" min="1" max="100" value="20"/></label>
+          <div class="muted small" id="seg-info"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 14. DETECTION -->
+    <section id="detection" class="card">
+      <h2>14 · Object Detection</h2>
+      <p>Sliding window + simple template matching. Pick a template (drag a rectangle on the image), then scan the image and visualise the response map and detected boxes.</p>
+      <div class="row">
+        <canvas id="det-canvas" width="320" height="320"></canvas>
+        <canvas id="det-heat" width="320" height="320"></canvas>
+        <div class="controls">
+          <button class="btn" id="det-pick">Pick template (drag on left)</button>
+          <label>Threshold: <input type="range" id="det-thresh" min="50" max="100" value="80"/></label>
+          <label>Mode:
+            <select id="det-mode">
+              <option value="ncc">Normalized cross-correlation</option>
+              <option value="ssd">Sum of squared diff (inverted)</option>
+            </select>
+          </label>
+          <div class="meta">Detections: <span id="det-count">0</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 15. SELF-SUPERVISED -->
+    <section id="ssl" class="card">
+      <h2>15 · Self-Supervised &amp; Contrastive Learning</h2>
+      <p>SimCLR-style: two augmented "views" of the same image should map close in feature space, different images should be far apart. Try the augmentation and see how a tiny learned projection separates positives from negatives.</p>
+      <div class="row">
+        <div id="ssl-views" class="ssl-views"></div>
+        <div class="controls">
+          <label>Augmentation strength: <input type="range" id="ssl-aug" min="0" max="100" value="50"/></label>
+          <button class="btn" id="ssl-step">Train step</button>
+          <button class="btn" id="ssl-reset">Reset</button>
+          <div class="meta">Avg cosine (pos): <span id="ssl-pos">—</span> · (neg): <span id="ssl-neg">—</span></div>
+          <canvas id="ssl-embed" width="320" height="220"></canvas>
+        </div>
+      </div>
+    </section>
+
+    <!-- 16. AUTOENCODERS -->
+    <section id="autoencoder" class="card">
+      <h2>16 · Autoencoders &amp; PCA</h2>
+      <p>An autoencoder compresses an image into a low-dim code and reconstructs it. We do PCA (the linear autoencoder) live on patches and let you scrub the latent dimension.</p>
+      <div class="row">
+        <canvas id="ae-input" width="200" height="200"></canvas>
+        <canvas id="ae-recon" width="200" height="200"></canvas>
+        <div class="controls">
+          <label>Latent dim k: <input type="range" id="ae-k" min="1" max="64" value="16"/></label>
+          <label>Patch size: <input type="range" id="ae-patch" min="4" max="16" step="2" value="8"/></label>
+          <div class="meta">Compression: <span id="ae-ratio">—</span> · MSE: <span id="ae-mse">—</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 17. GENERATIVE -->
+    <section id="generative" class="card">
+      <h2>17 · Generative Models</h2>
+      <p>Sample from a 2D latent space and watch the "generator" produce images. We show a tiny learned 2D-latent-to-image mapping plus the conceptual diagrams of GAN, VAE, and diffusion.</p>
+      <div class="row">
+        <canvas id="gen-canvas" width="320" height="320"></canvas>
+        <div class="controls">
+          <label>Family:
+            <select id="gen-mode">
+              <option value="vae">VAE walk</option>
+              <option value="gan">GAN walk</option>
+              <option value="diff">Diffusion noising</option>
+            </select>
+          </label>
+          <label>z₁: <input type="range" id="gen-z1" min="-100" max="100" value="0"/></label>
+          <label>z₂: <input type="range" id="gen-z2" min="-100" max="100" value="0"/></label>
+          <label>Diffusion step t: <input type="range" id="gen-t" min="0" max="100" value="0"/></label>
+          <div class="muted small" id="gen-info"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" class="card">
+      <h2>About</h2>
+      <p>Built as a study companion for the Computer Vision course. Every demo runs entirely in your browser — no server, no upload, your images never leave your machine.</p>
+      <p class="muted small">All demos are intentionally small and self-contained so you can read the source in <code>js/modules/</code> and tweak them. Real-world systems use OpenCV, PyTorch, etc. for performance — but the math here is the math there.</p>
+    </section>
+
+  </section>
+</main>
+
+<script src="js/app.js"></script>
+<script src="js/modules/image-formation.js"></script>
+<script src="js/modules/camera-model.js"></script>
+<script src="js/modules/image-sensing.js"></script>
+<script src="js/modules/geometric.js"></script>
+<script src="js/modules/intensity.js"></script>
+<script src="js/modules/local.js"></script>
+<script src="js/modules/fourier.js"></script>
+<script src="js/modules/features.js"></script>
+<script src="js/modules/binary.js"></script>
+<script src="js/modules/perceptron.js"></script>
+<script src="js/modules/cnn.js"></script>
+<script src="js/modules/architectures.js"></script>
+<script src="js/modules/segmentation.js"></script>
+<script src="js/modules/detection.js"></script>
+<script src="js/modules/ssl.js"></script>
+<script src="js/modules/autoencoder.js"></script>
+<script src="js/modules/generative.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>
