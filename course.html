@@ -176,7 +176,21 @@ table.evtable td b{color:var(--text)}
   <p>This course is an introduction to the most relevant topics in Computer Vision and their engineering. It deliberately integrates <b>traditional</b> (geometry, optics, filtering, classical detectors) and <b>modern, machine-learning-driven</b> approaches (CNNs, transformers, generative models). The goal is a solid foundation that lets you build sophisticated applications and manage complex CV projects — from how an image is <em>formed and encoded</em>, through how it is <em>processed and analysed</em>, to the <em>deep models</em> that now define the state of the art.</p>
   <div class="callout">
     <span class="ct">How to use this page</span>
-    The program below is organised into <b>seven thematic modules</b> spanning the 30 sessions. Each session lists its learning objective, an explanation of every topic, the core CV concept or formula where the material is technical, a "key idea" takeaway, and links into the matching <a href="index.html">live demo</a>. Read it alongside the slides; experiment in the playground; verify your intuition against the math.
+    The program below is organised into <b>seven thematic modules</b> spanning the 30 sessions. Each session lists its learning objective, an explanation of every topic, the core CV concept or formula where the material is technical, a worked mini-example, a "pitfall" or "connects to" note, a "key idea" takeaway, annotated readings, and links into the matching <a href="index.html">live demo</a>. Read it alongside the slides; experiment in the playground; verify your intuition against the math.
+  </div>
+
+  <h3 class="sub" id="prereqs">Prerequisites &amp; how this course connects</h3>
+  <p>Computer Vision sits at the confluence of three mathematical streams you have already met in the BCSAI curriculum, and it leans on each in turn as the semester progresses. Coming in prepared on these makes the difference between following the derivations and merely watching them.</p>
+  <ul class="objlist">
+    <li><b>Linear algebra</b> (matrices, eigenvalues/eigenvectors, SVD, change of basis) — the language of the entire geometry half: homogeneous transforms, the camera matrix $K[R\,|\,t]$, the fundamental/essential matrices, and the second-moment matrix behind Harris corners are all linear-algebra objects. SVD in particular drives DLT homography estimation and the 8-point algorithm.</li>
+    <li><b>Calculus &amp; optimisation</b> (gradients, the chain rule, gradient descent) — image gradients $\nabla I$ underlie edges, corners and optical flow; the chain rule <em>is</em> backpropagation; and every deep model in Modules 6–7 is trained by stochastic gradient descent on a loss surface.</li>
+    <li><b>Probability &amp; statistics</b> (distributions, expectation, maximum likelihood, KL divergence) — needed for Otsu's between-class variance, RANSAC's inlier model, softmax/cross-entropy, and the generative objectives (VAE's ELBO, the GAN min-max game, the diffusion denoising loss).</li>
+    <li><b>Python programming</b> — NumPy array thinking transfers directly to images-as-tensors; OpenCV powers the classical pipelines (Modules 1–5) and PyTorch-style frameworks the learned models (Modules 6–7).</li>
+  </ul>
+  <p>The course also <b>builds on itself</b> in a deliberate arc: the convolution you design by hand in Session 16 becomes the learned kernel of Session 21; the intensity maps applied in-camera in Session 4 are re-derived as point operators in Session 15; the attention introduced for captioning in Session 24 becomes the transformer of Session 29. Where a session reaches forward or back, a <em>"connects to"</em> note flags it so you can build one mental model rather than thirty disconnected ones.</p>
+  <div class="callout">
+    <span class="ct">Weekly study load</span>
+    Over 14–15 teaching weeks the 150-hour budget works out to roughly <b>10 h/week</b>: about 4–5 h in the two live sessions, 4 h on coding exercises and async work, and 1–2 h reviewing notes and the readings below. Front-load the geometry weeks (Module 2 is nine sessions and the densest mathematically), and protect dedicated blocks for the individual and group projects rather than leaving them to the end. A realistic rhythm: re-derive each session's core formula by hand within 48 h of the lecture, then reproduce it in code in the matching demo.
   </div>
 
   <div class="metagrid">
@@ -222,11 +236,15 @@ table.evtable td b{color:var(--text)}
     <div class="bar-row"><span class="lbl">Class participation</span><div class="bar-track"><div class="bar-fill" style="width:5%"></div></div><span class="pct">5%</span></div>
   </div>
   <div class="assess-cards">
-    <div class="acard"><div class="top"><b>Final Exam</b><span class="w">35%</span></div><p>Comprehensive written exam. <b>Minimum passing grade of 3.5</b> required on this component for the course to pass.</p></div>
-    <div class="acard"><div class="top"><b>Intermediate tests</b><span class="w">30%</span></div><p>Solve Computer Vision problems and communicate progress through intermediate deliverables across the semester (continuous evaluation).</p></div>
-    <div class="acard"><div class="top"><b>Individual work</b><span class="w">15%</span></div><p>Individual project / coding exercises building CV applications in Python.</p></div>
-    <div class="acard"><div class="top"><b>Group work</b><span class="w">15%</span></div><p>Team project exercising communication, coordination and leadership.</p></div>
-    <div class="acard"><div class="top"><b>Class participation</b><span class="w">5%</span></div><p>Engagement during the live in-person sessions.</p></div>
+    <div class="acard"><div class="top"><b>Final Exam</b><span class="w">35%</span></div><p>Comprehensive written exam over all 30 sessions, weighted toward problem-solving rather than recall. <b>Minimum passing grade of 3.5/10</b> on this component is a hard gate — clear it even if your continuous marks are strong, or the course does not pass. <b>Format:</b> derivations and short numeric problems (project a point, compute a convolution output size, score an IoU), plus conceptual short-answer. <b>Tip:</b> practise deriving each module's core matrix/formula on blank paper under time pressure.</p></div>
+    <div class="acard"><div class="top"><b>Intermediate tests</b><span class="w">30%</span></div><p>Continuous evaluation: solve CV problems and communicate progress through staged deliverables across the semester. <b>Criteria:</b> correctness of the method, quality of the implementation, and clarity of the written/verbal explanation. <b>Format:</b> short in-class problem sets and milestone hand-ins. <b>Tip:</b> these reward steady weekly work — falling behind compounds because each test assumes the previous module.</p></div>
+    <div class="acard"><div class="top"><b>Individual work</b><span class="w">15%</span></div><p>Individual project / coding exercises building CV applications in Python (OpenCV for classical pipelines, a DL framework for learned models). <b>Rubric:</b> does it run and solve the stated task (correctness), is the code clean and reproducible (engineering), and is the result evaluated honestly (analysis)? <b>Deliverable:</b> a runnable repo/notebook plus a short report. <b>Tip:</b> log a baseline first, then improve — reviewers reward measured progress.</p></div>
+    <div class="acard"><div class="top"><b>Group work</b><span class="w">15%</span></div><p>Team project exercising communication, coordination and leadership. <b>Rubric:</b> technical soundness of the CV solution, division/integration of work, and quality of the presentation/demo. <b>Deliverable:</b> a working system, a written report, and a live or recorded demo. <b>Tip:</b> agree interfaces early and use version control from day one; integration is where teams lose marks.</p></div>
+    <div class="acard"><div class="top"><b>Class participation</b><span class="w">5%</span></div><p>Engagement during the live in-person sessions: asking and answering questions, contributing to discussion, and helping during practical exercises. <b>Tip:</b> participation is cheap to earn and easy to forget — speaking once per session comfortably covers it.</p></div>
+  </div>
+  <div class="callout">
+    <span class="ct">How the components fit together</span>
+    The weighting tells a story: <b>65%</b> of the grade (final + intermediate tests) measures your <em>individual command of the material</em>, while <b>30%</b> (individual + group projects) measures your ability to <em>build real CV systems</em>, and <b>5%</b> rewards live engagement. Because continuous evaluation (intermediate tests + projects) is spread across the semester, the workload is deliberately even — but note the re-sit erases all of it, so the safest strategy is to pass in the ordinary call by keeping pace week to week.
   </div>
   <div class="callout warn">
     <span class="ct">Pass, attendance &amp; re-sit rules</span>
@@ -258,15 +276,18 @@ table.evtable td b{color:var(--text)}
         <h4>Course presentation</h4>
         <p class="sobj">Objective: define the field, fix the vocabulary, and survey what is and isn't possible today.</p>
         <ul class="topics">
-          <li><b>Definition &amp; relationship with other disciplines</b> — CV recovers semantic/geometric information <em>from</em> images, the inverse of computer graphics (which renders images from a model); it overlaps image processing, photogrammetry, pattern recognition and ML.</li>
-          <li><b>Main concepts</b> — image as a function $I(x,y)$, the pipeline from acquisition to interpretation, and the notion of an ill-posed inverse problem.</li>
-          <li><b>Historical background</b> — from Roberts' blocks world (1963) and Marr's levels of analysis to the deep-learning inflection point (AlexNet, 2012).</li>
-          <li><b>State of the art</b> — detection, segmentation, depth, generation, and large vision-language models framing today's applications.</li>
+          <li><b>Definition &amp; relationship with other disciplines</b> — Computer Vision recovers semantic and geometric information <em>from</em> images and video; it is the inverse of computer graphics, which <em>renders</em> images from a known 3-D model. It overlaps image processing (which transforms images into images), photogrammetry (precise 3-D measurement from photos), pattern recognition and machine learning. Concretely: graphics asks "given this cube and light, what pixels result?"; CV asks the far harder reverse — "given these pixels, what cube and light produced them?".</li>
+          <li><b>Main concepts</b> — a grayscale image is a function $I(x,y)$ mapping pixel coordinates to intensity (colour adds channels, video adds time $t$); the canonical pipeline runs acquisition → pre-processing → feature/representation → analysis → interpretation. Recovering the 3-D scene from a 2-D image is <em>ill-posed</em>: infinitely many scenes project to the same picture, so extra information (priors, geometry, learned statistics) is always required.</li>
+          <li><b>Historical background</b> — from Larry Roberts' "blocks world" (1963) and David Marr's three levels of analysis (computational / algorithmic / implementational) in the 1980s, through the feature-engineering era (SIFT, HOG) of the 2000s, to the deep-learning inflection point when AlexNet won ImageNet in 2012 and halved the error rate of hand-designed pipelines.</li>
+          <li><b>State of the art</b> — robust object detection and segmentation, monocular and multi-view depth, photorealistic generation (diffusion), and large vision-language models that caption, answer questions about and reason over images — the applications that frame the rest of the course.</li>
         </ul>
+        <div class="keyidea"><b>Worked example:</b> a single pixel of value 137 in an 8-bit image is just $I(x,y)=137$ on the scale $0$ (black) to $255$ (white); a $1920\times1080$ colour frame is therefore a $1080\times1920\times3$ array of ~6.2 million numbers — the raw object every algorithm in this course operates on.</div>
         <div class="keyidea"><b>Key idea:</b> vision is an <em>inverse</em> problem — infer the 3-D world and its meaning from a 2-D projection — which is why priors, geometry and learning all matter.</div>
+        <div class="callout"><span class="ct">Connects to</span>The "inverse problem" framing recurs everywhere: geometry (Module 2) supplies the <em>priors of projection</em>, classical features (Module 5) supply <em>hand-designed priors</em>, and deep learning (Modules 6–7) <em>learns the priors from data</em>.</div>
         <a class="demolink" href="index.html#hero">Demo · Site overview</a>
         <a class="demolink" href="index.html#image-formation">Demo · 1 Image formation</a>
-        <ul class="readings"><li><b>Szeliski, Computer Vision: Algorithms and Applications</b> — Ch. 1 (Introduction).</li><li><b>Forsyth &amp; Ponce, Computer Vision: A Modern Approach</b> — Ch. 1.</li></ul>
+        <ul class="readings"><li><b>Szeliski, Computer Vision: Algorithms and Applications</b> — Ch. 1 (Introduction): read for the field map and the historical timeline.</li><li><b>Forsyth &amp; Ponce, Computer Vision: A Modern Approach</b> — Ch. 1: complementary framing of what CV is and isn't.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> you are learning to <em>undo projection and quantisation</em> — every later technique is a different strategy for adding back the information the camera threw away.</div>
       </div>
 
       <div class="session" id="s2">
@@ -274,15 +295,18 @@ table.evtable td b{color:var(--text)}
         <h4>Computer Vision Engineering (I)</h4>
         <p class="sobj">Objective: understand the optical and illumination physics that determine image quality.</p>
         <ul class="topics">
-          <li><b>Basic illumination techniques &amp; sources</b> — front/back/structured lighting; controlling light is often cheaper than fixing the algorithm.</li>
-          <li><b>Camera elements &amp; optics fundamentals</b> — aperture, focal length, depth of field; the thin-lens relation $\tfrac{1}{f}=\tfrac{1}{z_o}+\tfrac{1}{z_i}$.</li>
-          <li><b>Fisheye &amp; omnidirectional cameras</b> — wide-FOV non-perspective projections and the radial distortion they introduce.</li>
-          <li><b>Sensors &amp; example applications</b> — CCD vs CMOS, the photon→charge→digital path, and where each lens/sensor choice is used.</li>
+          <li><b>Basic illumination techniques &amp; sources</b> — front lighting reveals surface texture, back lighting produces clean silhouettes for measuring outlines, and structured lighting projects a known pattern to extract 3-D shape. In industrial CV, choosing the right lighting is often cheaper and far more reliable than engineering an algorithm to cope with bad lighting — a controlled scene turns a hard recognition problem into an easy thresholding one.</li>
+          <li><b>Camera elements &amp; optics fundamentals</b> — aperture controls light intake and depth of field, focal length sets magnification and field of view, and the thin-lens relation $\tfrac{1}{f}=\tfrac{1}{z_o}+\tfrac{1}{z_i}$ ties object distance $z_o$, image distance $z_i$ and focal length $f$ together: only objects at the conjugate distance focus sharply, everything else blurs into a circle of confusion.</li>
+          <li><b>Fisheye &amp; omnidirectional cameras</b> — ultra-wide lenses sacrifice the rectilinear (straight-lines-stay-straight) perspective model for coverage approaching or exceeding 180°, introducing strong radial distortion that bends straight world lines into curves; modelling and undistorting this is essential before any geometric reasoning.</li>
+          <li><b>Sensors &amp; example applications</b> — CCD sensors shift charge across the chip for low noise; CMOS sensors digitise per-pixel for speed, low power and lower cost (now dominant). Both follow the photon → charge → voltage → digital number path, and the choice of lens + sensor is dictated by the application: machine vision, automotive, microscopy, astronomy.</li>
         </ul>
         <div class="fmla">Thin lens: 1/f = 1/z_o + 1/z_i &nbsp;·&nbsp; FOV ≈ 2·arctan(sensor_size / 2f)</div>
+        <div class="keyidea"><b>Worked example:</b> a 50 mm lens focused on an object 2 m away forms its image at $1/z_i = 1/50\text{mm} - 1/2000\text{mm}$, giving $z_i \approx 51.3$ mm behind the lens — barely past $f$, which is why distant scenes focus "at infinity" essentially at the focal plane. Pair that 50 mm lens with a 36 mm-wide sensor and the horizontal FOV is $\approx 2\arctan(36/(2\cdot50)) \approx 40°$.</div>
         <div class="keyidea"><b>Key idea:</b> the image you analyse is already the product of physics choices — lighting, lens and sensor — made before a single line of code runs.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Forgetting radial distortion. On wide or cheap lenses, straight lines bow visibly; running calibration (Sessions 12–13) and undistorting <em>before</em> homography or stereo is mandatory, or every geometric estimate inherits the lens error.</div>
         <a class="demolink" href="index.html#image-sensing">Demo · 3 Image sensing</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.1–2.3 (image formation, photometric &amp; optical models).</li><li><b>Livingstone, Vision and Art: The Biology of Seeing</b> — light &amp; the eye as biological motivation.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.1–2.3 (image formation, photometric &amp; optical models): the physics behind every formula above.</li><li><b>Livingstone, Vision and Art: The Biology of Seeing</b> — light &amp; the eye, the biological motivation for engineering an artificial vision front end.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> control the optics and lighting and you remove variance the algorithm would otherwise have to learn — good CV engineering starts at the lens, not the loss function.</div>
       </div>
 
       <div class="session" id="s3">
@@ -290,15 +314,19 @@ table.evtable td b{color:var(--text)}
         <h4>Computer Vision Engineering (II)</h4>
         <p class="sobj">Objective: represent colour, encode images efficiently, and start coding with OpenCV.</p>
         <ul class="topics">
-          <li><b>Color perception</b> — trichromatic human vision; why three channels suffice and metamerism arises.</li>
-          <li><b>Color spaces</b> — RGB, HSV, YCbCr, Lab; choosing a space that separates the property you care about (e.g. hue vs brightness).</li>
-          <li><b>Image compression</b> — redundancy removal; JPEG's block DCT + quantization + entropy coding (lossy) vs PNG (lossless).</li>
-          <li><b>First steps with OpenCV</b> — reading/displaying images, channel order (BGR), data types, basic manipulation.</li>
+          <li><b>Color perception</b> — human vision is trichromatic: three cone types (roughly L/M/S, "red/green/blue") sample the spectrum, so any colour collapses to three numbers. This is why three channels suffice — and why <em>metamerism</em> arises: two physically different spectra that excite the cones identically look the same, which is exactly what lets RGB displays fool the eye with just three primaries.</li>
+          <li><b>Color spaces</b> — RGB mixes brightness and colour together; HSV separates hue, saturation and value so you can threshold on colour regardless of lighting; YCbCr splits luminance from chrominance (the basis of compression and broadcast); Lab is perceptually uniform so Euclidean distance approximates perceived colour difference. Pick the space that isolates the property your task depends on.</li>
+          <li><b>Image compression</b> — natural images are highly redundant (neighbouring pixels correlate). Lossy JPEG exploits this in three steps — split into 8×8 blocks, apply the DCT, then <em>quantize</em> (coarsely round) the high-frequency coefficients the eye barely notices, then entropy-code — while lossless PNG uses prediction + DEFLATE to compress without discarding any data.</li>
+          <li><b>First steps with OpenCV</b> — <code>imread</code>/<code>imshow</code>, the surprising <b>BGR</b> channel order (not RGB), <code>uint8</code> vs <code>float32</code> dtypes and the overflow/clipping bugs they cause, and basic array-slicing manipulation of the image-as-NumPy-array.</li>
         </ul>
+        <div class="fmla">JPEG block: 8×8 pixels → DCT → divide by quantization table Q → round → entropy code</div>
+        <div class="keyidea"><b>Worked example:</b> to find a red ball, converting to HSV and thresholding hue $\in[0°,10°]\cup[350°,360°]$ with high saturation is robust to brightness changes; the same threshold in RGB would fail the moment a shadow falls across the ball, because R, G and B all drop together.</div>
         <div class="keyidea"><b>Key idea:</b> JPEG already <em>is</em> a frequency-domain idea — it throws away high-frequency detail your eye barely notices, exactly the Fourier intuition from Module 3.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>OpenCV loads images as <b>BGR</b>, not RGB. Display or save with the wrong assumption and reds and blues swap; this is the single most common first-week bug, and it silently corrupts any colour-based logic downstream.</div>
         <a class="demolink" href="index.html#intensity">Demo · 5 Intensity &amp; histogram</a>
         <a class="demolink" href="index.html#image-input">Demo · Image input</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.3 (colour) &amp; Ch. 2.3.3 (compression).</li><li><b>Forsyth &amp; Ponce</b> — colour chapter.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.3 (colour models) &amp; Ch. 2.3.3 (compression): how the spaces and JPEG are defined.</li><li><b>Forsyth &amp; Ponce</b> — colour chapter: perception-first treatment of why three channels work.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> choosing the right colour space is the cheapest robustness win in classical CV — it moves the property you care about onto its own axis before you write a single threshold.</div>
       </div>
 
       <div class="session" id="s4">
@@ -306,15 +334,18 @@ table.evtable td b{color:var(--text)}
         <h4>Camera configuration &amp; streaming</h4>
         <p class="sobj">Objective: operate a real camera and deliver a live video stream — the engineering glue of a CV system.</p>
         <ul class="topics">
-          <li><b>Acquisition methods</b> — frame grabbing, triggering, and synchronisation.</li>
-          <li><b>Focus / Iris</b> — sharpness and the aperture's trade-off between light intake and depth of field.</li>
-          <li><b>Exposure, white balance, gamma</b> — exposure time vs gain (noise); white balance for colour constancy; gamma encoding $V_{out}=V_{in}^{\gamma}$ matching perceptual response.</li>
-          <li><b>Setting up an RTSP server</b> — packaging frames into a real-time streaming protocol for networked consumption.</li>
+          <li><b>Acquisition methods</b> — continuous frame grabbing vs hardware/software <em>triggering</em> (capture exactly when an event occurs, e.g. a part passes a sensor) and multi-camera <em>synchronisation</em> so frames share a timestamp — essential for stereo and motion analysis where mis-timed frames ruin correspondence.</li>
+          <li><b>Focus / Iris</b> — focus sets the conjugate distance that appears sharp; the iris (aperture) trades light intake against depth of field. A wide aperture (small f-number) gathers light and isolates a subject with shallow DoF; a narrow aperture keeps a wide depth in focus but demands more light or longer exposure.</li>
+          <li><b>Exposure, white balance, gamma</b> — exposure time and gain both brighten the image but gain amplifies noise, so prefer exposure when motion allows; white balance rescales channels to achieve colour constancy under different illuminants (so white looks white); gamma encoding $V_{out}=V_{in}^{\gamma}$ allocates more code values to dark tones, matching the eye's roughly logarithmic response (encode ≈1/2.2, decode ≈2.2).</li>
+          <li><b>Setting up an RTSP server</b> — the Real-Time Streaming Protocol packetises and timestamps frames for low-latency networked delivery, letting downstream CV nodes consume a live feed — the engineering glue between a camera and a vision service.</li>
         </ul>
-        <div class="fmla">Gamma: V_out = V_in ^ γ &nbsp;(encode ~1/2.2, decode ~2.2)</div>
+        <div class="fmla">Gamma: V_out = V_in ^ γ &nbsp;(encode ~1/2.2, decode ~2.2) &nbsp;·&nbsp; exposure value ∝ exposure_time × ISO_gain</div>
+        <div class="keyidea"><b>Worked example:</b> a pixel at linear intensity $0.2$ encoded with $\gamma=1/2.2$ is stored as $0.2^{0.455}\approx0.48$ — nearly mid-grey — so dark regions get far more of the available 256 levels than a linear encoding would give them, reducing visible banding in shadows.</div>
         <div class="keyidea"><b>Key idea:</b> exposure, white balance and gamma are point intensity transforms applied <em>in the camera</em> — the same maps you'll implement by hand in Session 15.</div>
+        <div class="callout"><span class="ct">Connects to</span>Every control here is a point operation $s=T(r)$. Gamma reappears verbatim in Session 15's pixelwise toolkit, and white balance is just a per-channel contrast stretch — so this "camera engineering" session is secretly a preview of image processing.</div>
         <a class="demolink" href="index.html#intensity">Demo · 5 Intensity (gamma/stretch)</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.3.1 (sampling, aliasing, exposure) &amp; OpenCV video I/O docs.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.3.1 (sampling, aliasing, exposure): the signal-processing view of acquisition. <b>OpenCV video I/O docs</b> — practical capture &amp; streaming.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> the camera is a tiny image-processing pipeline; understanding its knobs lets you fix problems at capture time instead of fighting them in software.</div>
       </div>
     </div>
   </div>
@@ -337,14 +368,17 @@ table.evtable td b{color:var(--text)}
         <h4>Introduction to projective geometry</h4>
         <p class="sobj">Objective: adopt homogeneous coordinates so projection and perspective become linear.</p>
         <ul class="topics">
-          <li><b>Projective space ℙⁿ</b> — points as rays through the origin; equivalence up to scale, with points at infinity made explicit.</li>
-          <li><b>Projective space ℙ²</b> — the image plane: points and lines are dual 3-vectors; their cross product gives intersection/join.</li>
-          <li><b>Projective space ℙ³</b> — the world space whose points the camera projects down to ℙ².</li>
+          <li><b>Projective space ℙⁿ</b> — represent points by $(n{+}1)$-vectors defined only up to a non-zero scale, i.e. as rays through the origin in $\mathbb{R}^{n+1}$. This makes <em>points at infinity</em> first-class citizens (a final coordinate of 0), so parallel lines "meet at infinity" and perspective foreshortening becomes algebraically clean.</li>
+          <li><b>Projective space ℙ²</b> — the image plane. Beautifully, both points and lines are 3-vectors and they are <em>dual</em>: a point lies on a line iff $\mathbf{x}^{\top}\mathbf{l}=0$, the line through two points is their cross product $\mathbf{l}=\mathbf{x}_1\times\mathbf{x}_2$, and the intersection of two lines is $\mathbf{x}=\mathbf{l}_1\times\mathbf{l}_2$ — one operation does join and meet.</li>
+          <li><b>Projective space ℙ³</b> — the world space of scene points, represented by 4-vectors, that the camera projects down to ℙ² via a single $3\times4$ matrix.</li>
         </ul>
-        <div class="fmla">Homogeneous: (x, y) ↔ (x, y, 1) ~ (λx, λy, λ), λ ≠ 0</div>
+        <div class="fmla">Homogeneous: (x, y) ↔ (x, y, 1) ~ (λx, λy, λ), λ ≠ 0 &nbsp;·&nbsp; point on line: xᵀl = 0 &nbsp;·&nbsp; line through points: l = x₁ × x₂</div>
+        <div class="keyidea"><b>Worked example:</b> the lines $x=1$ and $x=2$ are $\mathbf{l}_1=(1,0,-1)$ and $\mathbf{l}_2=(1,0,-2)$; their intersection $\mathbf{l}_1\times\mathbf{l}_2=(0,1,0)\to$ a point with third coordinate 0 — a point at infinity in the $y$-direction. That is the projective statement that two vertical lines are parallel.</div>
         <div class="keyidea"><b>Key idea:</b> moving to homogeneous coordinates turns the non-linear perspective division into a single matrix multiply — the trick that powers the whole geometry module.</div>
+        <div class="callout"><span class="ct">Connects to</span>Everything in Sessions 6–13 is a linear map in these coordinates: image transforms (S6), the camera matrix (S7), homographies and the fundamental matrix (S9–10). Master homogeneous coordinates now and the rest of the module is matrix algebra.</div>
         <a class="demolink" href="index.html#camera-model">Demo · 2 Camera model</a>
-        <ul class="readings"><li><b>Hartley &amp; Zisserman, Multiple View Geometry</b> — Ch. 1–2 (projective geometry of 2-D/3-D).</li></ul>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman, Multiple View Geometry</b> — Ch. 1–2 (projective geometry of 2-D and 3-D): the definitive, careful treatment — read Ch. 2 closely for point/line duality.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> a point and a line are the same kind of object in ℙ², and a single cross product joins or meets them — this duality is what makes projective geometry so compact.</div>
       </div>
 
       <div class="session" id="s6">
@@ -352,15 +386,18 @@ table.evtable td b{color:var(--text)}
         <h4>Image transformations</h4>
         <p class="sobj">Objective: classify and apply the 2-D transformation hierarchy on images.</p>
         <ul class="topics">
-          <li><b>Scaling &amp; Translation</b> — resizing and shifting; translation needs the homogeneous extra row to be linear.</li>
-          <li><b>Rotation</b> — orthonormal $R$ preserving lengths and angles (rigid/Euclidean).</li>
-          <li><b>Affine</b> — 6-DOF map preserving parallelism (rotation + scale + shear + translation).</li>
-          <li><b>Perspective</b> — 8-DOF homography preserving straight lines but not parallelism; models a plane viewed from any angle.</li>
+          <li><b>Scaling &amp; Translation</b> — scaling multiplies coordinates by $s$ (uniform) or $s_x,s_y$ (anisotropic); translation adds an offset. Translation is <em>not</em> linear in 2-D coordinates, which is precisely why we lift to homogeneous coordinates — there it becomes the extra column $t$ of a $3\times3$ matrix.</li>
+          <li><b>Rotation</b> — an orthonormal matrix $R$ ($R^{\top}R=I$, $\det R=1$) that preserves lengths and angles; rotation + translation is a <em>rigid/Euclidean</em> motion (3 DOF in 2-D), the transform a moving rigid object or camera undergoes.</li>
+          <li><b>Affine</b> — a 6-DOF map (a general $2\times2$ linear part + translation) combining rotation, anisotropic scale and shear; it preserves <em>parallelism</em> and ratios of areas but not angles or lengths — a good model for weak-perspective or a distant planar surface.</li>
+          <li><b>Perspective (homography)</b> — the full 8-DOF $3\times3$ projective map; it preserves straight lines and the cross-ratio but <em>not</em> parallelism, so railway tracks converge. It exactly models a planar surface viewed from any angle, or any two views related by pure rotation.</li>
         </ul>
-        <div class="fmla">Affine: [x'; y'; 1] = [[a,b,t_x],[c,d,t_y],[0,0,1]] · [x; y; 1]</div>
+        <div class="fmla">Affine: [x'; y'; 1] = [[a,b,t_x],[c,d,t_y],[0,0,1]] · [x; y; 1] &nbsp;·&nbsp; DOF: rigid 3 ⊂ similarity 4 ⊂ affine 6 ⊂ projective 8</div>
+        <div class="keyidea"><b>Worked example:</b> a 90° rotation has $R=\big[\begin{smallmatrix}0&-1\\1&0\end{smallmatrix}\big]$, so the point $(2,0)$ maps to $(0,2)$. Each correspondence gives 2 equations, so an affine map (6 DOF) needs ≥ 3 point pairs and a homography (8 DOF) needs ≥ 4 — the DOF count literally <em>is</em> the data requirement.</div>
         <div class="keyidea"><b>Key idea:</b> each transform is a strictly larger group than the last (rigid ⊂ similarity ⊂ affine ⊂ projective); the DOF count tells you how many point correspondences you need to estimate it.</div>
+        <div class="callout"><span class="ct">Connects to</span>The 4-point homography here is the same $H$ you estimate by DLT in S9–10 and fit with RANSAC for panorama stitching in S20 — image transforms are the foundation those build on.</div>
         <a class="demolink" href="index.html#geometric">Demo · 4 Geometric transforms</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.1.1 &amp; 3.6 (2-D transforms, warping).</li><li><b>Hartley &amp; Zisserman</b> — Ch. 2 (the transformation hierarchy).</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.1.1 (2-D transforms) &amp; 3.6 (image warping/resampling): the practical mechanics of applying a transform to pixels.</li><li><b>Hartley &amp; Zisserman</b> — Ch. 2: the full transformation hierarchy and what each preserves.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> know each transform's DOF and what it preserves — that pair of facts tells you both which transform models your situation and how many correspondences you must collect to estimate it.</div>
       </div>
 
       <div class="session" id="s7">
@@ -368,16 +405,19 @@ table.evtable td b{color:var(--text)}
         <h4>Image acquisition model</h4>
         <p class="sobj">Objective: write the complete pixel-from-world projection equation.</p>
         <ul class="topics">
-          <li><b>Lens models: pinhole, thin, thick</b> — ideal pinhole projection plus the corrections real lenses require.</li>
-          <li><b>Projection models</b> — perspective vs orthographic/weak-perspective approximations.</li>
-          <li><b>Intrinsic &amp; extrinsic parameters</b> — $K$ (focal lengths $f_x,f_y$, principal point $c_x,c_y$, skew) vs $[R\,|\,t]$ (camera pose).</li>
-          <li><b>Coordinate systems involved</b> — world → camera → image → pixel, and the transform chaining them.</li>
+          <li><b>Lens models: pinhole, thin, thick</b> — the pinhole is the ideal: every ray passes through one point, giving exact perspective with infinite depth of field but no light. The thin-lens model adds focusing and finite aperture; the thick-lens (and full compound-lens) model adds the principal planes and aberrations real optics introduce.</li>
+          <li><b>Projection models</b> — perspective (objects shrink with distance, the realistic model) versus orthographic and weak-perspective approximations that drop the depth division and are valid when the scene's depth is small relative to its distance — far simpler algebra, used in early SfM.</li>
+          <li><b>Intrinsic &amp; extrinsic parameters</b> — intrinsics $K$ encode focal lengths $f_x,f_y$ (in pixels), the principal point $c_x,c_y$ and skew $s$; extrinsics $[R\,|\,t]$ encode the camera's orientation and position in the world. Together $P=K[R\,|\,t]$ is the $3\times4$ projection matrix.</li>
+          <li><b>Coordinate systems involved</b> — a point travels world → camera (apply $[R|t]$) → image plane (perspective division by depth) → pixel grid (apply $K$); knowing which frame you are in is half of solving any geometry problem.</li>
         </ul>
         <div class="fmla">x = K [R | t] X &nbsp;,&nbsp; K = [[f_x, s, c_x],[0, f_y, c_y],[0,0,1]] &nbsp;·&nbsp; pinhole: x = f·X/Z</div>
+        <div class="keyidea"><b>Worked example:</b> with $f_x=f_y=800$, principal point $(320,240)$, and a point $1\,$m right and $5\,$m deep, $X=(1,0,5)$ in the camera frame: $u = 800\cdot1/5 + 320 = 480$, $v = 800\cdot0/5 + 240 = 240$. The depth-5 divisor is the perspective effect — double the depth and the off-centre shift halves.</div>
         <div class="keyidea"><b>Key idea:</b> the camera matrix factorises cleanly into <em>what the camera is</em> (intrinsics $K$) and <em>where it is</em> (extrinsics $[R|t]$) — calibration estimates the first, pose estimation the second.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Conflating "focal length in mm" (an optical property) with $f_x,f_y$ "in pixels" (the intrinsic). The pixel focal length is the mm focal length divided by the pixel pitch — mixing the two breaks every projection calculation.</div>
         <a class="demolink" href="index.html#image-formation">Demo · 1 Pinhole projection</a>
         <a class="demolink" href="index.html#camera-model">Demo · 2 K[R|t]</a>
-        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 6 (camera models).</li><li><b>Forsyth &amp; Ponce</b> — geometric camera models.</li></ul>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 6 (camera models): the full $P=K[R|t]$ decomposition and its degrees of freedom.</li><li><b>Forsyth &amp; Ponce</b> — geometric camera models: a gentler first pass on the same equations.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> $x = K[R\,|\,t]X$ is the single equation the whole geometry module orbits — every later result either estimates a piece of it or exploits the constraint it imposes between views.</div>
       </div>
 
       <div class="session" id="s8">
@@ -385,16 +425,19 @@ table.evtable td b{color:var(--text)}
         <h4>Three-dimensional vision I &amp; II</h4>
         <p class="sobj">Objective: survey the cues and devices that recover depth from images.</p>
         <ul class="topics">
-          <li><b>Human 3-D &amp; stereoscopic vision</b> — binocular disparity; depth $Z = f\,B / d$ from baseline $B$ and disparity $d$.</li>
-          <li><b>Structured light (projection)</b> — projecting a known pattern and decoding its deformation for dense depth.</li>
-          <li><b>Time of flight</b> — measuring light round-trip time, $Z = c\,\Delta t / 2$.</li>
-          <li><b>Depth from focus / shape from shading &amp; texture</b> — using blur, shading gradients and texture foreshortening as monocular depth cues.</li>
-          <li><b>Optical flow &amp; motion</b> — the brightness-constancy constraint $I_x u + I_y v + I_t = 0$ for tracking and motion detection.</li>
+          <li><b>Human 3-D &amp; stereoscopic vision</b> — two eyes/cameras see a point at slightly different image positions; this <em>disparity</em> $d$ is inversely proportional to depth, giving $Z = f\,B/d$ for focal length $f$ and baseline $B$. Wider baselines resolve far objects better but shrink the overlapping field of view.</li>
+          <li><b>Structured light (projection)</b> — actively project a known pattern (stripes, dots, Gray code) and read its deformation on the surface; because the projected pattern <em>is</em> the correspondence, dense depth is recovered without solving the matching problem — the principle behind the original Kinect.</li>
+          <li><b>Time of flight</b> — emit modulated light and measure round-trip time (or phase) per pixel: $Z = c\,\Delta t/2$. Works in textureless scenes where stereo fails, but resolution and multipath are limiting.</li>
+          <li><b>Depth from focus / shape from shading &amp; texture</b> — monocular cues: which depth is in focus reveals distance, shading gradients reveal surface orientation (shape-from-shading), and the foreshortening of a known texture reveals slant. Each is weak alone but informative as a prior.</li>
+          <li><b>Optical flow &amp; motion</b> — the brightness-constancy assumption (a moving point keeps its intensity) linearises to $I_x u + I_y v + I_t = 0$, one equation in two unknowns $(u,v)$ — the <em>aperture problem</em>. Lucas–Kanade resolves it by assuming constant flow in a small window.</li>
         </ul>
-        <div class="fmla">Stereo depth: Z = f·B / d &nbsp;·&nbsp; Optical flow: I_x·u + I_y·v + I_t = 0</div>
+        <div class="fmla">Stereo depth: Z = f·B / d &nbsp;·&nbsp; ToF: Z = c·Δt/2 &nbsp;·&nbsp; Optical flow: I_x·u + I_y·v + I_t = 0</div>
+        <div class="keyidea"><b>Worked example:</b> a stereo rig with $f=800\,$px and baseline $B=0.1\,$m sees a point at disparity $d=20\,$px, so $Z = 800\cdot0.1/20 = 4\,$m. Note the sensitivity: at $d=2\,$px the same rig reports $40\,$m, so far-away depth is fragile — disparity error blows up quadratically with distance.</div>
         <div class="keyidea"><b>Key idea:</b> there are many independent paths to depth — geometry (stereo), active sensing (structured light, ToF) and image cues (focus, shading, motion); robust systems fuse several.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>The aperture problem: from a single small window you can only measure flow <em>normal</em> to an edge, not along it — which is why optical flow needs a local smoothness or constant-flow assumption to give a full $(u,v)$.</div>
         <a class="demolink" href="index.html#features">Demo · 8 Gradients (flow building block)</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 11–12 (stereo, 3-D reconstruction) &amp; Ch. 9 (motion/optical flow).</li><li><b>Hartley &amp; Zisserman</b> — stereo &amp; reconstruction.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 11–12 (stereo &amp; 3-D reconstruction) and Ch. 9 (dense motion / optical flow): the geometry and the algorithms.</li><li><b>Hartley &amp; Zisserman</b> — stereo &amp; reconstruction chapters: the projective view of two-view depth.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> depth from a 2-D image is never free — you pay with a second view, active illumination, motion, or a prior; choosing which cost to pay is the core design decision in any 3-D system.</div>
       </div>
 
       <div class="session" id="s9">
@@ -402,16 +445,19 @@ table.evtable td b{color:var(--text)}
         <h4>Multiple view geometry</h4>
         <p class="sobj">Objective: relate two or more views algebraically.</p>
         <ul class="topics">
-          <li><b>Single &amp; dual-camera models</b> — one projection matrix vs a stereo pair sharing a rigid relative pose.</li>
-          <li><b>Homography</b> — a 3×3 $H$ mapping one image of a plane to another (also pure-rotation panoramas).</li>
-          <li><b>Epipolar geometry</b> — the fundamental matrix $F$ with $x'^{\!\top} F x = 0$ constraining a point to a line in the other view.</li>
-          <li><b>Structure from motion</b> — jointly recovering cameras and 3-D points from many views.</li>
+          <li><b>Single &amp; dual-camera models</b> — a single projection matrix $P$ maps the world to one image; a dual (stereo) model adds a second camera with a fixed relative pose $(R,t)$, and the pair's geometry is what lets us triangulate depth.</li>
+          <li><b>Homography</b> — a $3\times3$ invertible $H$ relating two images of the same plane, or two views sharing the same centre (pure rotation). Eight DOF, estimable from four point correspondences — the workhorse of rectification, mosaicing and augmented-reality marker tracking.</li>
+          <li><b>Epipolar geometry</b> — for a general (non-planar) scene, the fundamental matrix $F$ encodes the two-view geometry: any point $\mathbf{x}$ in image 1 must lie on the <em>epipolar line</em> $F\mathbf{x}$ in image 2, expressed by $\mathbf{x}'^{\top}F\mathbf{x}=0$. $F$ has rank 2 and 7 DOF.</li>
+          <li><b>Structure from motion</b> — given many overlapping views, jointly recover all camera poses and a 3-D point cloud: match features, estimate pairwise geometry, triangulate, then globally refine — the engine behind photogrammetry and 3-D scanning apps.</li>
         </ul>
-        <div class="fmla">Epipolar constraint: x'ᵀ F x = 0 &nbsp;·&nbsp; Planar map: x' = H x</div>
+        <div class="fmla">Epipolar constraint: x'ᵀ F x = 0 &nbsp;·&nbsp; Planar map: x' = H x &nbsp;·&nbsp; F is 3×3, rank 2, 7 DOF</div>
+        <div class="keyidea"><b>Worked example:</b> without epipolar geometry, matching a point means searching the whole second image — $O(N^2)$ pixels. The constraint $\mathbf{x}'^{\top}F\mathbf{x}=0$ pins the match to a single line, cutting the search to $O(N)$; after rectification that line is a horizontal row, so the search is a 1-D scan.</div>
         <div class="keyidea"><b>Key idea:</b> the epipolar constraint collapses a 2-D correspondence search to a 1-D line search — the single most useful geometric fact in stereo and SfM.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>A homography only relates two views if the scene is planar <em>or</em> the camera purely rotates. Fit $H$ to a 3-D scene with translation and it will be wrong — that case needs the fundamental matrix $F$, not $H$.</div>
         <a class="demolink" href="index.html#geometric">Demo · 4 Projective/homography</a>
         <a class="demolink" href="index.html#detection">Demo · 14 Matching (correspondence)</a>
-        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 9–11 (epipolar geometry, F, trifocal &amp; SfM).</li></ul>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 9–11 (epipolar geometry, the fundamental matrix, the trifocal tensor and SfM): the core reference for this and the next session.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> $H$ for planes/rotation, $F$ for everything else — picking the right two-view model is the first decision in any multi-view pipeline.</div>
       </div>
 
       <div class="session" id="s10">
@@ -419,15 +465,18 @@ table.evtable td b{color:var(--text)}
         <h4>Multiple view geometry (continued)</h4>
         <p class="sobj">Objective: deepen the two-view tools and complete the SfM pipeline.</p>
         <ul class="topics">
-          <li><b>Single &amp; dual-camera models</b> — revisited with estimation in practice (normalised coordinates, RANSAC robustness).</li>
-          <li><b>Homography</b> — DLT estimation from ≥ 4 correspondences and its applications (rectification, mosaicing).</li>
-          <li><b>Epipolar geometry</b> — estimating $F$/$E$ (8-point algorithm) and decomposing $E$ into relative $R, t$.</li>
-          <li><b>Structure from motion</b> — triangulation + bundle adjustment refining cameras and points jointly.</li>
+          <li><b>Single &amp; dual-camera models</b> — revisited as an estimation problem: <em>normalise</em> coordinates (translate/scale so points are centred with unit average distance) for numerical conditioning, and wrap the fit in <b>RANSAC</b> so a few wrong matches don't corrupt the model.</li>
+          <li><b>Homography</b> — the Direct Linear Transform stacks each correspondence into two rows of a system $Ah=0$ and solves by SVD (the null-space vector); $\geq4$ matches suffice. Applications: stereo rectification, image mosaicing/panoramas, planar AR.</li>
+          <li><b>Epipolar geometry</b> — the normalised <b>8-point algorithm</b> estimates $F$ linearly; with known intrinsics, $F$ becomes the essential matrix $E=K'^{\top}FK$, which factors as $E=[t]_\times R$ and decomposes (via SVD) into the relative rotation $R$ and translation direction $t$ between the two cameras.</li>
+          <li><b>Structure from motion</b> — from relative pose, triangulate 3-D points, then run <b>bundle adjustment</b>: a large non-linear least-squares refinement minimising total reprojection error over all camera and point parameters simultaneously.</li>
         </ul>
-        <div class="fmla">Essential: E = [t]_× R &nbsp;·&nbsp; F = K'⁻ᵀ E K⁻¹</div>
+        <div class="fmla">Essential: E = [t]_× R &nbsp;·&nbsp; F = K'⁻ᵀ E K⁻¹ &nbsp;·&nbsp; DLT/8-point: solve A h = 0 by SVD</div>
+        <div class="keyidea"><b>Worked example:</b> the 8-point algorithm needs 8 correspondences because $F$ has 9 entries known only up to scale → 8 unknowns, and each match $\mathbf{x}'^{\top}F\mathbf{x}=0$ gives one linear equation. Hartley's normalisation (centre + scale to $\sqrt2$ average distance) can cut the numerical error by orders of magnitude versus raw pixels.</div>
         <div class="keyidea"><b>Key idea:</b> bundle adjustment is the workhorse optimiser of 3-D vision — it minimises total reprojection error over all cameras and points at once.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Skipping normalisation before the 8-point/DLT solve. Raw pixel coordinates (hundreds in magnitude, ones for the homogeneous term) make $A$ wildly ill-conditioned; always normalise first, then de-normalise the result.</div>
         <a class="demolink" href="index.html#detection">Demo · 14 Template matching</a>
-        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 11 (estimating F) &amp; Appendix on bundle adjustment.</li><li><b>Szeliski</b> — Ch. 11 (SfM).</li></ul>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 11 (estimating $F$, the normalised 8-point algorithm) &amp; the bundle-adjustment appendix.</li><li><b>Szeliski</b> — Ch. 11 (SfM pipelines end to end).</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> robust geometry = good conditioning (normalise) + robustness to outliers (RANSAC) + a final non-linear polish (bundle adjustment); the linear estimate is only the seed.</div>
       </div>
 
       <div class="session" id="s11">
@@ -435,12 +484,16 @@ table.evtable td b{color:var(--text)}
         <h4>Depth cameras</h4>
         <p class="sobj">Objective: configure and capture from real depth-sensing rigs.</p>
         <ul class="topics">
-          <li><b>Stereoscopic camera configuration &amp; capture</b> — calibrating/rectifying a stereo pair so disparity maps directly to depth.</li>
-          <li><b>Structured-light camera configuration &amp; capture</b> — projector–camera setup, pattern choice, and decoding to a depth map.</li>
+          <li><b>Stereoscopic camera configuration &amp; capture</b> — physically mount two calibrated cameras with a known baseline, then <em>rectify</em> the pair (warp both images so epipolar lines become corresponding horizontal rows). After rectification a block-matching or semi-global-matching algorithm scans each row for the disparity, and $Z=fB/d$ converts it to depth.</li>
+          <li><b>Structured-light camera configuration &amp; capture</b> — replace the second camera with a projector: emit a coded pattern (e.g. Gray-code stripes or a speckle), capture the deformed pattern, decode which projector column each pixel saw, and triangulate — effectively a stereo pair where one "camera" is an active emitter, robust on textureless surfaces.</li>
         </ul>
+        <div class="fmla">After rectification: epipolar lines are image rows → depth = f·B / disparity(row)</div>
+        <div class="keyidea"><b>Worked example:</b> rectification reduces the correspondence search from a slanted epipolar line (sub-pixel resampling, 2-D bookkeeping) to "for each pixel, scan left along the same row" — the reason real-time stereo on embedded hardware is feasible at all.</div>
         <div class="keyidea"><b>Key idea:</b> a rectified stereo pair turns the epipolar lines horizontal, so depth becomes a simple per-row 1-D disparity search.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Stereo fails on textureless or repetitive regions (blank walls, periodic fences) where matching is ambiguous — exactly the case structured light solves by <em>creating</em> texture with its projected pattern.</div>
         <a class="demolink" href="index.html#camera-model">Demo · 2 Camera model</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 12 (depth sensing, active illumination).</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 12 (depth sensing, rectification, active illumination): the practical pipeline for both rigs.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> rectification is the bridge from epipolar theory (S9–10) to a working depth sensor — it is what makes disparity a cheap 1-D lookup.</div>
       </div>
 
       <div class="session" id="s12">
@@ -448,13 +501,17 @@ table.evtable td b{color:var(--text)}
         <h4>Camera calibration I</h4>
         <p class="sobj">Objective: understand how intrinsics and distortion are estimated.</p>
         <ul class="topics">
-          <li><b>Introduction &amp; tools</b> — why calibration matters and the OpenCV calibration toolchain.</li>
-          <li><b>Zhang's method</b> — a planar checkerboard at several poses yields homographies that constrain $K$ and lens distortion.</li>
-          <li><b>Calibration process issues</b> — pattern coverage, degenerate poses, and distortion-model selection.</li>
+          <li><b>Introduction &amp; tools</b> — calibration recovers the intrinsics $K$ and lens-distortion coefficients so pixel measurements become metric geometry; without it, every projection, stereo depth and pose estimate carries a systematic bias. OpenCV's <code>calibrateCamera</code> implements the standard toolchain.</li>
+          <li><b>Zhang's method</b> — show a planar checkerboard (known geometry) at several orientations. Each view yields a homography between the board plane and the image; because a homography of a calibration plane constrains $K$ via the image of the absolute conic, ~3+ views over-determine the 5 intrinsic unknowns, which are then refined non-linearly together with distortion.</li>
+          <li><b>Calibration process issues</b> — pattern <em>coverage</em> (corners must fill the frame, including edges/corners where distortion is strongest), avoiding <em>degenerate</em> near-parallel board poses, and choosing the right distortion model (radial $k_1,k_2,k_3$ + tangential) — too many terms over-fits, too few leaves residual bias.</li>
         </ul>
+        <div class="fmla">Each planar view → homography H = K [r₁ r₂ t]; ≥3 views over-determine the 5 intrinsics in K</div>
+        <div class="keyidea"><b>Worked example:</b> $K$ has 5 unknowns ($f_x,f_y,c_x,c_y,s$). Each checkerboard view contributes 2 constraints on $K$ (from the orthonormality of $r_1,r_2$), so 3 views give 6 constraints &gt; 5 — enough to solve, and more views simply improve the least-squares estimate and average out noise.</div>
         <div class="keyidea"><b>Key idea:</b> Zhang's flexible method needs only a printed checkerboard waved at the camera — each planar view gives a homography that constrains the unknown intrinsics.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Capturing all your views from the same distance and angle gives degenerate, near-identical homographies that under-constrain $K$ — vary depth, tilt and position, and push the board into the image corners where distortion lives.</div>
         <a class="demolink" href="index.html#camera-model">Demo · 2 Intrinsics K</a>
-        <ul class="readings"><li><b>Zhang (2000), "A flexible new technique for camera calibration"</b>; <b>Szeliski</b> Ch. 6.3.</li></ul>
+        <ul class="readings"><li><b>Zhang (2000), "A flexible new technique for camera calibration"</b> — the original method, well worth reading; <b>Szeliski</b> Ch. 6.3 for the textbook treatment.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> calibration is geometry-as-estimation — a known planar target turns the unknown $K$ into a solvable least-squares problem, and view diversity is what makes it well-posed.</div>
       </div>
 
       <div class="session" id="s13">
@@ -462,14 +519,17 @@ table.evtable td b{color:var(--text)}
         <h4>Camera calibration II</h4>
         <p class="sobj">Objective: run an end-to-end calibration and validate it.</p>
         <ul class="topics">
-          <li><b>Pattern image acquisition</b> — capturing well-distributed checkerboard views.</li>
-          <li><b>Running the calibration process</b> — detecting corners, solving for $K$, distortion and per-view poses.</li>
-          <li><b>Checking reprojection error</b> — the RMS pixel error between detected and reprojected corners as the quality metric.</li>
+          <li><b>Pattern image acquisition</b> — capture 15–30 sharp, well-distributed checkerboard views spanning depth, tilt and frame position; blurry or motion-smeared frames give sub-pixel corner errors that propagate into $K$.</li>
+          <li><b>Running the calibration process</b> — detect and sub-pixel-refine the corners, build the correspondence between board points and image points, solve the linear system for an initial $K$ and per-view poses, then jointly refine $K$, distortion and all poses by minimising reprojection error (Levenberg–Marquardt).</li>
+          <li><b>Checking reprojection error</b> — re-project the known 3-D corners with the estimated parameters and measure the RMS pixel distance to the detected corners; a good calibration lands below ~0.5 px. Inspect per-view error to spot and drop a bad capture.</li>
         </ul>
-        <div class="fmla">Reprojection error = (1/N) Σ ‖ x_i − project(K, R, t, X_i) ‖</div>
+        <div class="fmla">Reprojection error = sqrt( (1/N) Σ ‖ x_i − project(K, R, t, X_i) ‖² ) &nbsp;(target ≲ 0.5 px)</div>
+        <div class="keyidea"><b>Worked example:</b> if reprojection error is 0.3 px the calibration is trustworthy; if one view reports 4 px while the rest report 0.3 px, that frame had mis-detected corners — delete it and re-run rather than accepting the inflated average.</div>
         <div class="keyidea"><b>Key idea:</b> reprojection error in sub-pixel units is the honest yardstick — a calibration is only as good as the geometry it reproduces.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>A low <em>average</em> reprojection error can hide one disastrous view. Always check the per-image breakdown; the mean is not robust to a single outlier capture.</div>
         <a class="demolink" href="index.html#camera-model">Demo · 2 Reprojection intuition</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 6.3 (calibration practice); OpenCV calibration tutorial.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 6.3 (calibration in practice); <b>OpenCV calibration tutorial</b> for the exact API and corner-refinement steps.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> reprojection error is the one number that certifies a calibration — measure it, read it per-view, and never trust intrinsics you haven't validated this way.</div>
       </div>
     </div>
   </div>
@@ -485,8 +545,9 @@ table.evtable td b{color:var(--text)}
         <div class="snum">SESSION 14 · LIVE IN-PERSON</div>
         <h4>Mid-term exam</h4>
         <p class="sobj">Objective: assess Sessions 1–13 — formation, optics, colour, projective geometry, the camera model, multi-view geometry and calibration.</p>
-        <ul class="topics"><li><b>Mid-term exam</b> — solving Computer Vision problems on the foundations and geometry material covered so far.</li></ul>
-        <div class="callout"><span class="ct">Study tip</span>Revisit the camera-model and geometric-transform demos and be able to derive each matrix by hand; most exam problems are variations on "given these parameters, where does this point project / how do these views relate?".</div>
+        <ul class="topics"><li><b>Mid-term exam</b> — solving Computer Vision problems on the foundations and geometry material covered so far: image formation and optics, colour and compression, projective geometry and the transformation hierarchy, the full camera model $K[R|t]$, multi-view geometry ($H$, $F$, $E$, SfM) and calibration.</li></ul>
+        <div class="callout"><span class="ct">Study tip</span>Revisit the camera-model and geometric-transform demos and be able to derive each matrix by hand; most exam problems are variations on "given these parameters, where does this point project / how do these views relate?". Build a one-page formula sheet from memory: thin lens, $K[R|t]$, the transform DOF table, $Z=fB/d$, the epipolar constraint and reprojection error.</div>
+        <div class="callout"><span class="ct">Likely problem types</span>(1) project a given 3-D point through a given $K[R|t]$; (2) classify/estimate a 2-D transform and state its DOF; (3) compute stereo depth from disparity; (4) reason about why a calibration or correspondence failed. Practising each end-to-end beats re-reading the slides.</div>
         <a class="demolink" href="index.html#camera-model">Review · 2 Camera model</a>
         <a class="demolink" href="index.html#geometric">Review · 4 Geometric</a>
       </div>
@@ -510,15 +571,18 @@ table.evtable td b{color:var(--text)}
         <h4>Pixelwise operations</h4>
         <p class="sobj">Objective: transform each pixel independently via an intensity map $s = T(r)$.</p>
         <ul class="topics">
-          <li><b>Pixelwise operations &amp; pixel transformations</b> — negative $s=L-1-r$, log $s=c\log(1+r)$, gamma $s=c\,r^{\gamma}$, contrast stretching.</li>
-          <li><b>Histogram equalization</b> — remapping intensities by the CDF to flatten the histogram and maximise global contrast.</li>
-          <li><b>Binarization</b> — thresholding to a 0/1 image, the gateway to morphology and connected components.</li>
+          <li><b>Pixelwise operations &amp; pixel transformations</b> — apply an intensity map $s=T(r)$ identically to every pixel: the negative $s=L-1-r$ (invert), log $s=c\log(1+r)$ (compress bright, expand dark), gamma $s=c\,r^{\gamma}$ (perceptual remap) and contrast stretching (linearly rescale a narrow intensity band to the full range). All are 1-D lookup tables.</li>
+          <li><b>Histogram equalization</b> — use the image's own cumulative distribution as the transform: $s=\text{round}((L-1)\cdot\text{cdf}(r))$. This spreads frequent intensities apart and squeezes rare ones together, flattening the histogram and maximising global contrast — automatic, parameter-free contrast enhancement.</li>
+          <li><b>Binarization</b> — collapse to a 0/1 image by thresholding $s=\mathbb{1}[r&gt;t]$; the gateway to morphology, connected-component labelling and shape analysis. The whole game is choosing $t$ (Otsu, Session 19, picks it automatically).</li>
         </ul>
         <div class="fmla">s = T(r) &nbsp;·&nbsp; equalize: s = round((L−1)·cdf(r)) &nbsp;·&nbsp; gamma: s = c·rᵞ</div>
+        <div class="keyidea"><b>Worked example:</b> an image whose pixels all fall in $[100,150]$ looks flat and grey; contrast stretching $s=255\cdot(r-100)/50$ maps that band to the full $[0,255]$, instantly revealing detail — and histogram equalization does the same thing adaptively, driven by where the pixels actually cluster.</div>
         <div class="keyidea"><b>Key idea:</b> a point operation depends only on a pixel's own value, so it is fully described by a 1-D lookup curve — and the histogram tells you which curve helps.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Histogram equalization is global and can over-amplify noise in near-flat regions; when contrast varies across the image, prefer <em>adaptive</em> (CLAHE) equalization that limits amplification per tile.</div>
         <a class="demolink" href="index.html#intensity">Demo · 5 Intensity &amp; histogram</a>
         <a class="demolink" href="index.html#binary">Demo · 9 Binarization</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.1 (point operators) &amp; 3.1.4 (histogram equalization).</li><li><b>Forsyth &amp; Ponce</b> — early image-processing chapter.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.1 (point operators) &amp; 3.1.4 (histogram equalization): the canonical curves and the CDF derivation.</li><li><b>Forsyth &amp; Ponce</b> — early image-processing chapter for intuition.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> read the histogram first — it diagnoses the contrast problem and points straight at the 1-D curve that fixes it.</div>
       </div>
 
       <div class="session" id="s16">
@@ -526,17 +590,20 @@ table.evtable td b{color:var(--text)}
         <h4>Local operations</h4>
         <p class="sobj">Objective: process each pixel using its neighbourhood via convolution.</p>
         <ul class="topics">
-          <li><b>Introduction</b> — neighbourhood operators and the convolution definition.</li>
-          <li><b>Separable filters</b> — a 2-D Gaussian factorises into two 1-D passes, cutting cost from $O(k^2)$ to $O(2k)$ per pixel.</li>
-          <li><b>Linear filtering examples</b> — box/Gaussian blur, Sobel/Laplacian edges, sharpening.</li>
-          <li><b>Band-pass &amp; orientable filters; other local operators</b> — DoG band-pass, steerable filters, and non-linear ops (median, bilateral).</li>
+          <li><b>Introduction</b> — a local (neighbourhood) operator computes each output pixel from a window of input pixels. The linear case is <em>convolution</em>: slide a kernel $K$ over the image and take the weighted sum, $(I*K)(x,y)=\sum_{i,j} I(x-i,y-j)K(i,j)$. Boundary handling (zero-pad, reflect, replicate) matters at the edges.</li>
+          <li><b>Separable filters</b> — a kernel is separable if $K=\mathbf{u}\mathbf{v}^{\top}$; then 2-D convolution becomes a 1-D horizontal pass followed by a 1-D vertical pass, dropping the cost per pixel from $O(k^2)$ to $O(2k)$. The Gaussian and the box filter are separable — a large speedup for big kernels.</li>
+          <li><b>Linear filtering examples</b> — box and Gaussian blur (low-pass, denoising), Sobel (first-derivative, edges), Laplacian (second-derivative, fine detail), and unsharp masking (sharpen by adding back the high-pass residual).</li>
+          <li><b>Band-pass &amp; orientable filters; other local operators</b> — Difference-of-Gaussians as a band-pass/blob detector, steerable filters that synthesise any orientation from a basis, and <em>non-linear</em> neighbourhood ops: the median filter (removes salt-and-pepper noise, preserves edges) and the bilateral filter (edge-preserving smoothing).</li>
         </ul>
-        <div class="fmla">(I * K)(x,y) = Σ_i Σ_j I(x−i, y−j) · K(i,j)</div>
+        <div class="fmla">(I * K)(x,y) = Σ_i Σ_j I(x−i, y−j) · K(i,j) &nbsp;·&nbsp; separable: cost O(k²) → O(2k)</div>
+        <div class="keyidea"><b>Worked example:</b> convolving a 1-D signal $[10,10,10,50,50]$ with the Sobel-like derivative kernel $[-1,0,1]$ gives a large response (≈40) only at the step between 10 and 50 — that spike <em>is</em> an edge. The vertical Sobel does this column-wise to find horizontal edges.</div>
         <div class="keyidea"><b>Key idea:</b> convolution is the atom of classical vision <em>and</em> of CNNs — the only thing that changes later is that the kernel weights are learned rather than designed.</div>
+        <div class="callout"><span class="ct">Connects to</span>This is the most important bridge in the course: the hand-designed kernels here become the <em>learned</em> kernels of the CNN in Session 21, and a single conv layer is exactly this operation with trainable weights. Separability reappears as depthwise-separable convolutions in efficient nets.</div>
         <a class="demolink" href="index.html#local">Demo · 6 Convolution playground</a>
         <a class="demolink" href="index.html#features">Demo · 8 Sobel/DoG</a>
         <a class="demolink" href="index.html#cnn">Demo · 11 CNN (learned kernels)</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.2 (linear filtering, separability) &amp; 3.3 (non-linear filters).</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.2 (linear filtering &amp; separability) and 3.3 (median/bilateral and other non-linear filters): work through the separability proof.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> if you truly understand convolution and separability here, CNNs in Module 6 are not a new idea — they are this operation with the kernel weights learned by gradient descent.</div>
       </div>
 
       <div class="session" id="s17">
@@ -544,14 +611,17 @@ table.evtable td b{color:var(--text)}
         <h4>Global operations</h4>
         <p class="sobj">Objective: analyse and filter images in the frequency domain.</p>
         <ul class="topics">
-          <li><b>Fourier transform &amp; the 2-D (bidimensional) DFT</b> — decomposing an image into spatial-frequency components.</li>
-          <li><b>DFT interpretation</b> — magnitude (how much of each frequency) vs phase (where structure sits); low frequencies = smooth regions, high = edges/texture.</li>
-          <li><b>Other global transformations</b> — DCT (compression), wavelets (multi-scale).</li>
+          <li><b>Fourier transform &amp; the 2-D (bidimensional) DFT</b> — express the image as a sum of 2-D sinusoids; the DFT $F(u,v)$ gives the amplitude and phase of each spatial frequency $(u,v)$. The 2-D DFT is separable, so it is computed as 1-D FFTs along rows then columns in $O(MN\log MN)$.</li>
+          <li><b>DFT interpretation</b> — the <em>magnitude</em> spectrum says how much of each frequency is present (centre = low frequencies = smooth gradients; periphery = high frequencies = edges and texture), while the <em>phase</em> says where that structure sits — and phase carries most of the recognisable image content (swap two images' phases and the picture follows the phase).</li>
+          <li><b>Other global transformations</b> — the DCT (real-valued, energy-compacting — the heart of JPEG from Session 3) and wavelets (joint space-frequency, multi-scale — the basis of image pyramids and JPEG-2000).</li>
         </ul>
-        <div class="fmla">F(u,v) = Σ_x Σ_y I(x,y) · e^( −j2π (ux/M + vy/N) )</div>
+        <div class="fmla">F(u,v) = Σ_x Σ_y I(x,y) · e^( −j2π (ux/M + vy/N) ) &nbsp;·&nbsp; convolution theorem: I * K ⇔ F·K̂</div>
+        <div class="keyidea"><b>Worked example:</b> to remove periodic sensor noise (regular stripes), take the DFT — the stripes appear as two bright dots off-centre; zero those frequencies and inverse-transform, and the stripes vanish while the rest of the image is untouched. This surgical removal is impossible in the spatial domain.</div>
         <div class="keyidea"><b>Key idea:</b> by the convolution theorem, blurring/sharpening in space is just multiplying the spectrum by a low-/high-pass mask — the same operation seen from the other domain.</div>
+        <div class="callout"><span class="ct">Connects to</span>This closes a loop: JPEG (S3) is a block DCT, Gaussian blur (S16) is low-pass filtering, and a sharp edge is a burst of high frequencies — the spatial and frequency views are two descriptions of one image.</div>
         <a class="demolink" href="index.html#fourier">Demo · 7 2-D DFT &amp; filtering</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.4 (Fourier transforms) &amp; 3.5 (pyramids/wavelets).</li><li><b>Forsyth &amp; Ponce</b> — frequency-domain chapter.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.4 (Fourier transforms &amp; the convolution theorem) and 3.5 (pyramids/wavelets).</li><li><b>Forsyth &amp; Ponce</b> — frequency-domain chapter for the signal-processing grounding.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> the frequency domain turns convolution into multiplication and makes "remove this periodic structure" trivial — reach for it whenever a problem is about <em>scale</em> or <em>periodicity</em>.</div>
       </div>
     </div>
   </div>
@@ -573,15 +643,18 @@ table.evtable td b{color:var(--text)}
         <h4>Salient feature detection</h4>
         <p class="sobj">Objective: find repeatable, distinctive image points.</p>
         <ul class="topics">
-          <li><b>Introduction &amp; definitions</b> — what makes a feature "good": repeatability, distinctiveness, locality, invariance.</li>
-          <li><b>Surface curvature &amp; curvature-based methods</b> — corners as points of high curvature in the intensity surface.</li>
-          <li><b>Harris &amp; Stephens method</b> — the second-moment matrix $M$; cornerness $R = \det(M) - k\,\mathrm{tr}(M)^2$.</li>
-          <li><b>Gradient-based methods</b> — building detectors/descriptors from image gradients $\nabla I = (I_x, I_y)$.</li>
+          <li><b>Introduction &amp; definitions</b> — a good feature is <em>repeatable</em> (found again under viewpoint/lighting change), <em>distinctive</em> (its descriptor is unique enough to match), <em>local</em> (robust to occlusion and clutter) and ideally <em>invariant</em> to rotation, scale and illumination. These properties are what make features matchable across images.</li>
+          <li><b>Surface curvature &amp; curvature-based methods</b> — treat intensity as a 2-D surface $z=I(x,y)$; corners are points of high curvature in two directions, edges high curvature in one. Curvature of the level curves gives an early, principled corner measure.</li>
+          <li><b>Harris &amp; Stephens method</b> — form the second-moment (structure) matrix $M$ by summing gradient outer products over a window; its two eigenvalues describe how intensity varies locally. Rather than compute eigenvalues, Harris scores cornerness cheaply as $R=\det(M)-k\,\mathrm{tr}(M)^2$ ($k\approx0.04$–0.06): large positive $R$ = corner, large negative = edge, small = flat.</li>
+          <li><b>Gradient-based methods</b> — build detectors and descriptors from the image gradient $\nabla I=(I_x,I_y)$: gradient magnitude marks edges, orientation histograms (the idea behind SIFT/HOG) give rotation-tolerant descriptors.</li>
         </ul>
-        <div class="fmla">M = Σ_w [[I_x², I_xI_y],[I_xI_y, I_y²]] &nbsp;·&nbsp; R = det(M) − k·tr(M)²</div>
+        <div class="fmla">M = Σ_w [[I_x², I_xI_y],[I_xI_y, I_y²]] &nbsp;·&nbsp; R = det(M) − k·tr(M)² &nbsp;·&nbsp; det = λ₁λ₂, tr = λ₁+λ₂</div>
+        <div class="keyidea"><b>Worked example:</b> on a flat patch both eigenvalues $\lambda_1,\lambda_2\approx0$ so $R\approx0$; on an edge one is large, one ~0, so $\det\approx0$ but $\mathrm{tr}^2$ is large → $R\ll0$; on a corner both are large → $\det$ dominates → $R\gg0$. The single scalar $R$ thus classifies the three cases without ever extracting eigenvalues.</div>
         <div class="keyidea"><b>Key idea:</b> a corner is where intensity changes in <em>two</em> directions, i.e. both eigenvalues of the local gradient covariance $M$ are large — Harris just scores that cheaply.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Harris is rotation-invariant but <em>not</em> scale-invariant — a corner at one zoom is an edge or blob at another. For scale invariance use a scale-space detector (DoG/SIFT), which searches over blur levels too.</div>
         <a class="demolink" href="index.html#features">Demo · 8 Harris / DoG / Canny</a>
-        <ul class="readings"><li><b>Harris &amp; Stephens (1988)</b>; <b>Szeliski</b> Ch. 7.1 (feature detectors).</li></ul>
+        <ul class="readings"><li><b>Harris &amp; Stephens (1988)</b> — the original four-page paper, very readable; <b>Szeliski</b> Ch. 7.1 (feature detectors &amp; their invariances).</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> the eigenvalues of the local gradient structure matrix diagnose flat / edge / corner — almost every classical detector is a way of reading those two numbers cheaply.</div>
       </div>
 
       <div class="session" id="s19">
@@ -589,16 +662,19 @@ table.evtable td b{color:var(--text)}
         <h4>Intro to object recognition</h4>
         <p class="sobj">Objective: separate objects from background with classical segmentation.</p>
         <ul class="topics">
-          <li><b>Introduction</b> — recognition vs detection vs segmentation framed.</li>
-          <li><b>Edge detection-based techniques</b> — closing edge maps into object boundaries.</li>
-          <li><b>Image thresholding</b> — global/adaptive thresholds; <b>Otsu</b> maximising between-class variance to pick the level automatically.</li>
-          <li><b>Region-based algorithms</b> — region growing, split-and-merge, connected components.</li>
+          <li><b>Introduction</b> — fix the vocabulary: <em>classification</em> says what an image contains, <em>detection</em> says what and where (boxes), <em>segmentation</em> labels every pixel. Classical recognition tackles the simplest version — separate a known object from its background.</li>
+          <li><b>Edge detection-based techniques</b> — find boundaries (Canny: gradient + non-max suppression + hysteresis thresholding) then close them into object contours; works when objects have crisp, complete edges but struggles with gaps and texture.</li>
+          <li><b>Image thresholding</b> — global thresholding splits the histogram at one level; adaptive thresholding varies the level per region for uneven lighting. <b>Otsu's method</b> picks the global level automatically by maximising the between-class variance $\sigma^2_{between}(t)=w_0w_1(\mu_0-\mu_1)^2$ — equivalently minimising within-class variance — assuming a bimodal histogram.</li>
+          <li><b>Region-based algorithms</b> — group pixels by similarity: region growing (expand from seeds while a homogeneity test holds), split-and-merge (quadtree partition then merge similar neighbours), and connected-component labelling of a binary mask.</li>
         </ul>
-        <div class="fmla">Otsu: t* = argmax_t σ²_between(t) = argmax_t w₀w₁(μ₀−μ₁)²</div>
+        <div class="fmla">Otsu: t* = argmax_t σ²_between(t) = argmax_t w₀(t)·w₁(t)·(μ₀(t)−μ₁(t))²</div>
+        <div class="keyidea"><b>Worked example:</b> Otsu sweeps every candidate threshold $t$, splits the histogram into "below/above", computes each side's weight $w$ and mean $\mu$, and keeps the $t$ that maximises $w_0w_1(\mu_0-\mu_1)^2$ — for a histogram with two clear humps it lands neatly in the valley between them, with no parameter to tune.</div>
         <div class="keyidea"><b>Key idea:</b> segmentation can be driven by <em>discontinuity</em> (edges) or <em>similarity</em> (regions) — two complementary views of the same partition problem.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Otsu assumes a bimodal histogram; under uneven illumination one global threshold fails everywhere. Switch to adaptive/local thresholding, or correct the illumination first with a high-pass/background-subtraction step.</div>
         <a class="demolink" href="index.html#segmentation">Demo · 13 Otsu / region / edge / k-means</a>
         <a class="demolink" href="index.html#binary">Demo · 9 Connected components</a>
-        <ul class="readings"><li><b>Otsu (1979)</b>; <b>Szeliski</b> Ch. 5 (segmentation); <b>Forsyth &amp; Ponce</b> segmentation chapters.</li></ul>
+        <ul class="readings"><li><b>Otsu (1979)</b> — the original automatic-thresholding paper; <b>Szeliski</b> Ch. 5 (segmentation, active contours, graph cuts); <b>Forsyth &amp; Ponce</b> segmentation chapters.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> classical segmentation gives you a fast, label-free baseline — reach for thresholding/regions before deep models when lighting is controlled and objects are well separated.</div>
       </div>
 
       <div class="session" id="s20">
@@ -606,14 +682,17 @@ table.evtable td b{color:var(--text)}
         <h4>Image matching techniques</h4>
         <p class="sobj">Objective: locate and align content across images.</p>
         <ul class="topics">
-          <li><b>Template matching</b> — sliding a patch and scoring with SSD or normalised cross-correlation (NCC), robust to brightness changes.</li>
-          <li><b>Feature matching + homography</b> — matching descriptors, rejecting outliers with RANSAC, then fitting $H$ to align/stitch.</li>
+          <li><b>Template matching</b> — slide a reference patch $T$ over the image and score each location: SSD (sum of squared differences, fast but brightness-sensitive) or normalised cross-correlation (NCC, which subtracts the mean and divides by the norm, making it invariant to linear brightness/contrast changes). The best-scoring location is the match.</li>
+          <li><b>Feature matching + homography</b> — detect features, match their descriptors (nearest neighbour with a ratio test), then fit a homography $H$ with <b>RANSAC</b>: repeatedly sample 4 matches, fit $H$, count inliers, keep the best — discarding the inevitable wrong matches. The result aligns or stitches the images.</li>
         </ul>
-        <div class="fmla">NCC(u,v) = Σ (I−Ī)(T−T̄) / sqrt( Σ(I−Ī)² · Σ(T−T̄)² )</div>
+        <div class="fmla">NCC(u,v) = Σ (I−Ī)(T−T̄) / sqrt( Σ(I−Ī)² · Σ(T−T̄)² ) ∈ [−1, 1]</div>
+        <div class="keyidea"><b>Worked example:</b> RANSAC's power is statistical — even with 50% wrong matches, the chance that a random sample of 4 is all-correct is $0.5^4=6\%$, so after ~70 iterations you are &gt;99% likely to have hit a clean sample and recovered the true $H$. That is why it tolerates outliers a least-squares fit cannot.</div>
         <div class="keyidea"><b>Key idea:</b> template matching is brittle to rotation/scale; feature matching + RANSAC + homography is the robust upgrade that makes panoramas and registration work.</div>
+        <div class="callout"><span class="ct">Connects to</span>This is the payoff of the whole classical track: features (S18) + the homography (S6, S9–10) + RANSAC (S10) combine here into panorama stitching and image registration — the same pipeline that bootstraps SfM and visual SLAM.</div>
         <a class="demolink" href="index.html#detection">Demo · 14 NCC / SSD matching</a>
         <a class="demolink" href="index.html#geometric">Demo · 4 Homography warp</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 7.1–7.2 (matching) &amp; Ch. 8 (image alignment/stitching).</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 7.1–7.2 (feature matching &amp; the ratio test) and Ch. 8 (image alignment, RANSAC &amp; stitching).</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> use NCC when the target's appearance is fixed; switch to features + RANSAC + homography the moment viewpoint, rotation or scale can change.</div>
       </div>
     </div>
   </div>
@@ -636,15 +715,18 @@ table.evtable td b{color:var(--text)}
         <h4>Convolutional neural networks</h4>
         <p class="sobj">Objective: motivate and define the CNN.</p>
         <ul class="topics">
-          <li><b>Introduction</b> — from the MLP (fully-connected, ignores spatial structure) to weight-shared convolutions.</li>
-          <li><b>Applications</b> — classification, detection, segmentation, and beyond.</li>
-          <li><b>Functional perspective</b> — a CNN as a composition of layers; learning by gradient descent through backprop.</li>
+          <li><b>Introduction</b> — a fully-connected MLP on a $224\times224\times3$ image would need ~150k weights <em>per neuron</em> and ignore that nearby pixels relate. A convolutional layer instead slides a small shared kernel, so it has few parameters and respects spatial structure — the right model for images.</li>
+          <li><b>Applications</b> — the same convolutional backbone, with different output heads, powers classification, detection, semantic/instance segmentation, depth, pose and generation — the unifying architecture of modern CV.</li>
+          <li><b>Functional perspective</b> — a CNN is a composition $f=f_L\circ\dots\circ f_1$ of differentiable layers; training minimises a loss by gradient descent, with gradients computed by <em>backpropagation</em> (the chain rule applied layer by layer from the loss backward).</li>
         </ul>
-        <div class="fmla">conv: y = σ(W * x + b) &nbsp;·&nbsp; out = (n + 2p − k)/s + 1</div>
+        <div class="fmla">conv: y = σ(W * x + b) &nbsp;·&nbsp; output size: out = ⌊(n + 2p − k)/s⌋ + 1</div>
+        <div class="keyidea"><b>Worked example:</b> a $32\times32$ input, $5\times5$ kernel, padding $p=0$, stride $s=1$ gives output $(32-5)/1+1 = 28$, i.e. a $28\times28$ map. With $p=2$ ("same" padding) it stays $32\times32$. A 3×3 conv on 64 input channels producing 128 output channels has only $3\cdot3\cdot64\cdot128 = 73{,}728$ weights — tiny next to a dense layer.</div>
         <div class="keyidea"><b>Key idea:</b> convolution gives CNNs <em>local connectivity</em>, <em>weight sharing</em> and <em>translation equivariance</em> — far fewer parameters than a dense net, and the right inductive bias for images.</div>
+        <div class="callout"><span class="ct">Connects to</span>The conv operation is exactly Session 16's convolution — only now the kernel weights $W$ are <em>learned</em> by backprop instead of designed by hand. Memorise the output-size formula; it is examined and used constantly.</div>
         <a class="demolink" href="index.html#perceptron">Demo · 10 MLP playground</a>
         <a class="demolink" href="index.html#cnn">Demo · 11 CNN feature maps</a>
-        <ul class="readings"><li><b>Drummy et al., Dive into Deep Learning</b> — CNN chapters; <b>Szeliski</b> Ch. 5.3–5.4.</li></ul>
+        <ul class="readings"><li><b>Drummy et al., Dive into Deep Learning</b> — the CNN chapters (convolutions, padding/stride, channels); <b>Szeliski</b> Ch. 5.3–5.4 for the CV framing.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> a CNN trades a dense net's brute force for the inductive biases images actually have — locality, weight sharing, translation equivariance — which is why it generalises from far less data.</div>
       </div>
 
       <div class="session" id="s22">
@@ -652,13 +734,16 @@ table.evtable td b{color:var(--text)}
         <h4>Convolutional neural networks II</h4>
         <p class="sobj">Objective: build a CNN in practice.</p>
         <ul class="topics">
-          <li><b>Deep learning frameworks</b> — tensors, autograd, the train loop (forward → loss → backward → step), GPUs.</li>
-          <li><b>Implementing a CNN from scratch</b> — stacking conv/activation/pool/FC layers, choosing loss and optimiser, and training.</li>
+          <li><b>Deep learning frameworks</b> — tensors (n-D arrays on CPU/GPU), <em>autograd</em> (the framework records operations and differentiates automatically), and the canonical training loop: forward pass → compute loss → <code>loss.backward()</code> → <code>optimizer.step()</code> → zero gradients. GPUs accelerate the underlying matrix multiplies by 1–2 orders of magnitude.</li>
+          <li><b>Implementing a CNN from scratch</b> — stack conv → activation (ReLU) → pooling blocks to extract features, flatten, then fully-connected layers to a class score; pick a loss (cross-entropy for classification), an optimiser (SGD/Adam) and a learning rate, then train and monitor train/validation curves.</li>
         </ul>
         <div class="fmla">max-pool 2×2: y(i,j) = max over 2×2 window &nbsp;·&nbsp; ReLU: σ(z)=max(0,z)</div>
+        <div class="keyidea"><b>Worked example:</b> a $2\times2$ max-pool with stride 2 on a $28\times28$ map halves it to $14\times14$, keeping the strongest activation in each window — so the feature "an edge is present here-ish" survives a small shift. A typical block then doubles channels (e.g. 32→64), trading the lost spatial resolution for richer feature semantics.</div>
         <div class="keyidea"><b>Key idea:</b> pooling and strided convolution shrink spatial resolution while growing channel depth — the network trades "where" for "what" as it goes deeper.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>Forgetting to zero gradients each step makes them accumulate across batches and training diverges; and a learning rate too high explodes the loss while too low stalls it. Watch the loss curve from step one.</div>
         <a class="demolink" href="index.html#cnn">Demo · 11 Pooling &amp; activations</a>
-        <ul class="readings"><li><b>Dive into Deep Learning</b> — modern training; framework tutorials (PyTorch).</li></ul>
+        <ul class="readings"><li><b>Dive into Deep Learning</b> — the modern-training chapters and the PyTorch framework tutorials: build and train a small CNN end to end.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> the train loop (forward → loss → backward → step) is the same for every model in Modules 6–7 — internalise it once and only the architecture and loss change afterward.</div>
       </div>
 
       <div class="session" id="s23">
@@ -666,16 +751,19 @@ table.evtable td b{color:var(--text)}
         <h4>Convolutional neural networks III — advanced architectures</h4>
         <p class="sobj">Objective: trace the landmark architectures and the ideas each contributed.</p>
         <ul class="topics">
-          <li><b>AlexNet</b> — the 2012 ImageNet breakthrough: ReLU, dropout, GPU training at scale.</li>
-          <li><b>VGG</b> — depth via uniform stacks of small 3×3 convolutions.</li>
-          <li><b>GoogLeNet</b> — Inception modules and 1×1 convolutions for cheap channel mixing.</li>
-          <li><b>ResNet</b> — residual connections $y = F(x) + x$ enabling very deep networks.</li>
-          <li><b>U-Net</b> — symmetric encoder–decoder with skip connections for pixel-wise (segmentation) output.</li>
+          <li><b>AlexNet (2012)</b> — the breakthrough that started the deep era: 8 layers, ReLU activations (faster, no saturation), dropout regularisation, and training split across two GPUs. Halved the ImageNet error and ended the hand-crafted-feature era.</li>
+          <li><b>VGG (2014)</b> — showed that <em>depth</em> drives accuracy: uniform stacks of small $3\times3$ convolutions, where two stacked 3×3s match one 5×5's receptive field with fewer parameters and more non-linearity.</li>
+          <li><b>GoogLeNet / Inception (2014)</b> — parallel multi-scale branches per module, and $1\times1$ convolutions to mix channels and cut depth cheaply before expensive 3×3/5×5 convs — far fewer parameters at the same accuracy.</li>
+          <li><b>ResNet (2015)</b> — the residual block $y=F(x)+x$: the layer learns a <em>residual</em> on top of the identity, so adding depth never hurts. Enabled 50–152+ layer networks and remains the default backbone.</li>
+          <li><b>U-Net (2015)</b> — a symmetric encoder–decoder with skip connections that copy high-resolution encoder features across to the decoder, giving sharp per-pixel output — the standard for segmentation and the structural ancestor of diffusion denoisers.</li>
         </ul>
-        <div class="fmla">Residual block: y = F(x, {W_i}) + x</div>
+        <div class="fmla">Residual block: y = F(x, {W_i}) + x &nbsp;·&nbsp; two 3×3 convs ≈ one 5×5 receptive field, fewer params</div>
+        <div class="keyidea"><b>Worked example:</b> stacking plain layers past ~20 deep <em>raised</em> training error (the degradation problem). The residual fix is subtle: if the optimal map is the identity, a plain block must learn it exactly, but a residual block just drives $F(x)\to0$ — far easier — so gradients flow through the $+x$ shortcut and 100+ layers finally train.</div>
         <div class="keyidea"><b>Key idea:</b> the residual shortcut lets gradients flow straight through, so "deeper" stops hurting — ResNet is why 100+ layer networks train at all.</div>
+        <div class="callout"><span class="ct">Connects to</span>This lineage is one idea evolving — go deeper (VGG), go efficient (Inception's 1×1), go trainable-at-depth (ResNet's skip), go dense-output (U-Net's skip). U-Net's encoder–decoder reappears in segmentation (S25) and diffusion (S28).</div>
         <a class="demolink" href="index.html#architectures">Demo · 12 LeNet/VGG/ResNet/U-Net/ViT</a>
-        <ul class="readings"><li><b>He et al. (ResNet, 2016)</b>; <b>Simonyan &amp; Zisserman (VGG)</b>; <b>Dive into Deep Learning</b> — modern CNNs.</li></ul>
+        <ul class="readings"><li><b>He et al. (ResNet, 2016)</b> and <b>Simonyan &amp; Zisserman (VGG, 2015)</b> — read both for the depth/residual story; <b>Dive into Deep Learning</b> — the modern-CNN chapter walks through each architecture in code.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> you don't memorise architectures, you memorise the <em>ideas</em> each contributed — depth, 1×1 mixing, residual shortcuts, encoder–decoder skips — and recognise them recombined everywhere after.</div>
       </div>
 
       <div class="session" id="s24">
@@ -683,15 +771,18 @@ table.evtable td b{color:var(--text)}
         <h4>Recurrent neural networks</h4>
         <p class="sobj">Objective: model sequences and connect vision to language.</p>
         <ul class="topics">
-          <li><b>Introduction</b> — recurrence $h_t = f(h_{t-1}, x_t)$ for variable-length sequences (e.g. video, captions).</li>
-          <li><b>GRU networks</b> — gated units mitigating vanishing gradients with fewer parameters than LSTM.</li>
-          <li><b>LSTM networks</b> — cell state plus input/forget/output gates for long-range dependencies.</li>
-          <li><b>Image captioning with attention</b> — a CNN encoder + RNN decoder that attends to image regions while generating words.</li>
+          <li><b>Introduction</b> — an RNN carries a hidden state forward, $h_t=f(Wx_t+Uh_{t-1}+b)$, reusing the same weights at every step so it handles variable-length sequences (video frames, word sequences). Trained by backpropagation-through-time.</li>
+          <li><b>GRU networks</b> — gated recurrent units use update and reset gates to decide how much past state to keep, mitigating vanishing gradients with fewer parameters and gates than the LSTM — often the practical default.</li>
+          <li><b>LSTM networks</b> — add an explicit cell state plus input/forget/output gates; the forget gate lets information persist or be erased across many steps, capturing long-range dependencies a plain RNN forgets.</li>
+          <li><b>Image captioning with attention</b> — a CNN encodes the image into a grid of feature vectors; an RNN decoder generates words one at a time and, at each step, computes an attention distribution $\alpha=\text{softmax}(\text{score}(h,\text{features}))$ over the grid to <em>look at</em> the relevant region for the next word.</li>
         </ul>
-        <div class="fmla">h_t = f(W·x_t + U·h_{t−1} + b) &nbsp;·&nbsp; attention: α = softmax(score(h, features))</div>
+        <div class="fmla">h_t = f(W·x_t + U·h_{t−1} + b) &nbsp;·&nbsp; attention: α = softmax(score(h, features)), context = Σ α·features</div>
+        <div class="keyidea"><b>Worked example:</b> captioning "a dog catching a frisbee", the decoder's attention $\alpha$ peaks over the dog's head when emitting "dog" and shifts to the disc when emitting "frisbee" — a soft, differentiable pointer over image regions, visualisable as a heatmap per word.</div>
         <div class="keyidea"><b>Key idea:</b> attention lets the decoder <em>look back</em> at the most relevant image regions for each word — the precursor of the transformer attention in Session 29.</div>
+        <div class="callout warn"><span class="ct">Pitfall &amp; connects to</span>RNNs process steps sequentially, so they are slow and still strain on very long dependencies. Session 29's self-attention drops recurrence entirely for a parallel, global mechanism — the same attention idea you meet here, scaled up into the transformer.</div>
         <a class="demolink" href="index.html#architectures">Demo · 12 Architectures (ViT/attention)</a>
-        <ul class="readings"><li><b>Dive into Deep Learning</b> — RNN/GRU/LSTM &amp; attention chapters; <b>Bishop, Pattern Recognition and Machine Learning</b> (sequence models background).</li></ul>
+        <ul class="readings"><li><b>Dive into Deep Learning</b> — the RNN/GRU/LSTM and attention chapters (with the captioning case study); <b>Bishop, Pattern Recognition and ML</b> for the probabilistic sequence-model background.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> gating solved the memory problem and attention solved the "which input matters" problem — together they set up the transformer, which keeps attention and discards recurrence.</div>
       </div>
     </div>
   </div>
@@ -714,16 +805,19 @@ table.evtable td b{color:var(--text)}
         <h4>Detection &amp; segmentation using Deep Learning</h4>
         <p class="sobj">Objective: map each dense-prediction task to its network design.</p>
         <ul class="topics">
-          <li><b>Semantic segmentation</b> — per-pixel class labels via encoder–decoder/FCN (e.g. U-Net) and per-pixel cross-entropy.</li>
-          <li><b>Classification + localization</b> — predicting a class plus a bounding box (classification + regression heads).</li>
-          <li><b>Object detection / instance segmentation</b> — many objects with boxes (Faster R-CNN, SSD, YOLO) and per-instance masks (Mask R-CNN); IoU and non-max suppression.</li>
+          <li><b>Semantic segmentation</b> — label every pixel with a class via a fully-convolutional encoder–decoder (U-Net/FCN), trained with per-pixel cross-entropy; it tells <em>what</em> is at each pixel but does not separate two instances of the same class.</li>
+          <li><b>Classification + localization</b> — one object: a shared backbone feeds a classification head (softmax over classes) and a regression head (4 box coordinates), trained with a combined classification + box-regression loss.</li>
+          <li><b>Object detection / instance segmentation</b> — many objects: two-stage (Faster R-CNN: propose regions then classify/refine) or one-stage (SSD, YOLO: dense predictions in one pass); Mask R-CNN adds a per-instance mask head. <b>IoU</b> measures box overlap and <b>non-max suppression</b> removes duplicate boxes for the same object.</li>
         </ul>
-        <div class="fmla">IoU = area(∩) / area(∪) &nbsp;·&nbsp; (used in NMS &amp; detection metrics)</div>
+        <div class="fmla">IoU = area(∩) / area(∪) ∈ [0,1] &nbsp;·&nbsp; match if IoU ≥ 0.5; NMS keeps highest-score box, drops overlaps</div>
+        <div class="keyidea"><b>Worked example:</b> a predicted box and the ground-truth box overlap on 30 px² and together cover 90 px², so IoU $=30/90=0.33$ — below the usual 0.5 threshold, this counts as a miss. NMS uses the same metric: among overlapping detections it keeps the top-scoring box and suppresses any other with IoU above a threshold.</div>
         <div class="keyidea"><b>Key idea:</b> the four tasks form a ladder — "what" → "what + where (one)" → "what + where (many)" → "what + where + exact pixels" — each adding an output head, not a new paradigm.</div>
+        <div class="callout"><span class="ct">Connects to</span>The shared backbone is a Module 6 CNN (often ResNet); semantic segmentation reuses U-Net (S23) directly. Only the <em>heads</em> and <em>losses</em> change per task — the representation is the same.</div>
         <a class="demolink" href="index.html#segmentation">Demo · 13 Segmentation</a>
         <a class="demolink" href="index.html#detection">Demo · 14 Detection</a>
         <a class="demolink" href="index.html#architectures">Demo · 12 U-Net</a>
-        <ul class="readings"><li><b>Szeliski</b> — Ch. 6 (recognition/detection); <b>Dive into Deep Learning</b> — object detection &amp; segmentation.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 6 (recognition &amp; detection); <b>Dive into Deep Learning</b> — the object-detection and semantic-segmentation chapters (anchors, IoU, NMS, FCN).</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> dense-prediction tasks differ only by output head and loss on a shared backbone — once you can read IoU and NMS, the detection literature stops being a zoo.</div>
       </div>
 
       <div class="session" id="s26">
@@ -731,12 +825,15 @@ table.evtable td b{color:var(--text)}
         <h4>Detection &amp; segmentation using Deep Learning II</h4>
         <p class="sobj">Objective: train a one-stage detector end-to-end.</p>
         <ul class="topics">
-          <li><b>Training YOLO for object detection</b> — a single network predicting boxes + class probabilities over a grid in one pass; anchors, the multpart loss (localization + objectness + classification), and NMS at inference.</li>
+          <li><b>Training YOLO for object detection</b> — divide the image into an $S\times S$ grid; each cell predicts a few anchor-based boxes with coordinates, an <em>objectness</em> confidence and class probabilities, all in <em>one</em> forward pass. The multipart loss sums box-localization, objectness and classification terms (with $\lambda_{coord}$ up-weighting localization and down-weighting empty cells); at inference, confidence thresholding + NMS yield the final detections. In practice you fine-tune a pretrained YOLO on your own annotated dataset.</li>
         </ul>
-        <div class="fmla">YOLO loss = λ_coord·L_box + L_obj + L_cls &nbsp;·&nbsp; one forward pass → all boxes</div>
+        <div class="fmla">YOLO loss = λ_coord·L_box + L_obj + λ_noobj·L_noobj + L_cls &nbsp;·&nbsp; one forward pass → all boxes</div>
+        <div class="keyidea"><b>Worked example:</b> a 13×13 grid with 3 anchors and 80 classes predicts $13\cdot13\cdot3=507$ candidate boxes per image in a single pass; most have near-zero objectness and are thresholded away, then NMS collapses the overlapping survivors to a handful of final detections — fast enough for video at 30+ FPS.</div>
         <div class="keyidea"><b>Key idea:</b> YOLO reframes detection as a single regression over a grid, trading a little accuracy for real-time speed — "you only look once".</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>One-stage detectors face extreme foreground/background imbalance (the vast majority of grid cells are empty); the $\lambda_{noobj}$ down-weighting (and, in later detectors, focal loss) is what stops the background dominating the gradient.</div>
         <a class="demolink" href="index.html#detection">Demo · 14 Object detection</a>
-        <ul class="readings"><li><b>Redmon et al. (YOLO, 2016)</b>; Ultralytics YOLO docs; <b>Dive into Deep Learning</b>.</li></ul>
+        <ul class="readings"><li><b>Redmon et al. (YOLO, 2016)</b> — the original one-look formulation; <b>Ultralytics YOLO docs</b> for the practical training workflow; <b>Dive into Deep Learning</b> for anchors and loss design.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> the speed/accuracy trade-off is the detection design axis — one-stage (YOLO) for real time, two-stage (Faster R-CNN) when precision matters more than latency.</div>
       </div>
 
       <div class="session" id="s27">
@@ -744,16 +841,19 @@ table.evtable td b{color:var(--text)}
         <h4>Generative models I</h4>
         <p class="sobj">Objective: learn distributions over images (latent-variable &amp; autoregressive).</p>
         <ul class="topics">
-          <li><b>Unsupervised learning</b> — finding structure without labels; autoencoders and PCA as the linear case.</li>
-          <li><b>Variational Autoencoders (VAE)</b> — an encoder to a latent distribution + decoder, trained with the ELBO (reconstruction − KL); sampling $z$ generates new images.</li>
-          <li><b>PixelRNN / PixelCNN</b> — autoregressive models factorising $p(x)=\prod_i p(x_i\mid x_{<i})$ pixel by pixel.</li>
+          <li><b>Unsupervised learning</b> — learn structure without labels. An autoencoder compresses an image to a bottleneck code and reconstructs it; PCA is the linear special case (the optimal linear bottleneck), so an autoencoder is "PCA with non-linear encoder/decoder".</li>
+          <li><b>Variational Autoencoders (VAE)</b> — the encoder outputs a <em>distribution</em> $q(z|x)$ (mean + variance) rather than a point; training maximises the ELBO = reconstruction term − KL($q\,\|\,$prior), and the reparameterization trick $z=\mu+\sigma\odot\epsilon$ keeps it differentiable. Sampling $z$ from the prior and decoding generates new images.</li>
+          <li><b>PixelRNN / PixelCNN</b> — autoregressive models that factor the image likelihood exactly as $p(x)=\prod_i p(x_i\mid x_{&lt;i})$, predicting each pixel conditioned on the ones already generated — sharp and likelihood-exact, but slow because generation is sequential.</li>
         </ul>
-        <div class="fmla">VAE: maximize ELBO = E_q[log p(x|z)] − KL( q(z|x) ‖ p(z) )</div>
+        <div class="fmla">VAE: maximize ELBO = E_q[log p(x|z)] − KL( q(z|x) ‖ p(z) ) &nbsp;·&nbsp; reparam: z = μ + σ⊙ε, ε∼N(0,I)</div>
+        <div class="keyidea"><b>Worked example:</b> the KL term pulls every encoded $q(z|x)$ toward the standard-normal prior, so the latent space has no "holes". Decode the midpoint $0.5z_A+0.5z_B$ of two digits' codes and you get a plausible digit halfway between them — the smoothness a plain autoencoder lacks.</div>
         <div class="keyidea"><b>Key idea:</b> a VAE makes the latent space <em>continuous and smooth</em>, so walking through $z$ morphs generated images — exactly what the latent-walk demo shows.</div>
+        <div class="callout"><span class="ct">Connects to</span>Three generative philosophies meet here and in S28: VAEs (latent-variable, smooth but blurry), autoregressive (exact likelihood, slow), and — next session — GANs (sharp, implicit) and diffusion (iterative denoising). Each trades sample quality, diversity, speed and training stability differently.</div>
         <a class="demolink" href="index.html#autoencoder">Demo · 16 Autoencoder / PCA</a>
         <a class="demolink" href="index.html#generative">Demo · 17 VAE latent walk</a>
         <a class="demolink" href="index.html#ssl">Demo · 15 Self-supervised</a>
-        <ul class="readings"><li><b>Kingma &amp; Welling (VAE, 2014)</b>; <b>Bishop, Pattern Recognition and ML</b> — latent-variable models; <b>Dive into Deep Learning</b>.</li></ul>
+        <ul class="readings"><li><b>Kingma &amp; Welling (VAE, 2014)</b> — the original ELBO + reparameterization paper; <b>Bishop, Pattern Recognition and ML</b> — latent-variable models &amp; the EM/variational background; <b>Dive into Deep Learning</b> for the code.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> generative modelling is about <em>learning $p(x)$</em>; VAEs do it through a smooth latent bottleneck, autoregressive models through an exact pixel-by-pixel factorisation — different routes to the same goal.</div>
       </div>
 
       <div class="session" id="s28">
@@ -761,13 +861,16 @@ table.evtable td b{color:var(--text)}
         <h4>Generative models II</h4>
         <p class="sobj">Objective: contrast adversarial and diffusion generation.</p>
         <ul class="topics">
-          <li><b>Generative Adversarial Networks (GANs)</b> — a generator vs discriminator min-max game producing sharp samples (with mode-collapse risk).</li>
-          <li><b>Diffusion models</b> — learning to reverse a gradual noising process; denoise from pure noise to a sample (the basis of modern image generators).</li>
+          <li><b>Generative Adversarial Networks (GANs)</b> — two networks compete: a generator $G$ turns noise $z$ into fake images, a discriminator $D$ tries to tell real from fake, and $G$ is trained to fool $D$. At the min-max equilibrium $G$'s samples are indistinguishable from real data — yielding very sharp images, at the cost of unstable training and <em>mode collapse</em> (the generator emits only a few varieties).</li>
+          <li><b>Diffusion models</b> — define a fixed <em>forward</em> process that gradually adds Gaussian noise until an image becomes pure noise, then train a network to <em>reverse</em> one noising step (in practice, to predict the noise $\epsilon$). Generation starts from noise and denoises iteratively to a sample — stable to train, high quality and diverse, the basis of modern text-to-image systems.</li>
         </ul>
-        <div class="fmla">GAN: min_G max_D E[log D(x)] + E[log(1 − D(G(z)))] &nbsp;·&nbsp; Diffusion: x_t = √(ᾱ_t) x₀ + √(1−ᾱ_t) ε</div>
+        <div class="fmla">GAN: min_G max_D E[log D(x)] + E[log(1 − D(G(z)))] &nbsp;·&nbsp; Diffusion forward: x_t = √(ᾱ_t)·x₀ + √(1−ᾱ_t)·ε &nbsp;·&nbsp; loss: ‖ε − ε_θ(x_t,t)‖²</div>
+        <div class="keyidea"><b>Worked example:</b> a diffusion model's training target is dead simple — corrupt a clean image to $x_t$ with known noise $\epsilon$, then minimise $\|\epsilon-\epsilon_\theta(x_t,t)\|^2$, i.e. just predict the noise you added. Sampling then peels that noise off step by step from pure static. The denoiser $\epsilon_\theta$ is typically a U-Net (Session 23) — the architecture comes full circle.</div>
         <div class="keyidea"><b>Key idea:</b> GANs learn generation <em>implicitly</em> through a critic; diffusion learns it by <em>reversing noise</em> step by step — more stable to train and now state of the art.</div>
+        <div class="callout warn"><span class="ct">Pitfall</span>GAN training is a delicate equilibrium: if $D$ wins too fast the generator's gradients vanish, and mode collapse can leave it producing one image. Diffusion sidesteps both with a stable regression loss — at the cost of slow, many-step sampling.</div>
         <a class="demolink" href="index.html#generative">Demo · 17 GAN walk &amp; diffusion noising</a>
-        <ul class="readings"><li><b>Goodfellow et al. (GAN, 2014)</b>; <b>Ho et al. (DDPM, 2020)</b>; <b>Dive into Deep Learning</b> — GAN chapter.</li></ul>
+        <ul class="readings"><li><b>Goodfellow et al. (GAN, 2014)</b> — the adversarial game; <b>Ho et al. (DDPM, 2020)</b> — the noise-prediction diffusion formulation; <b>Dive into Deep Learning</b> — GAN chapter for the training loop.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> diffusion won the quality/stability/diversity trade-off that held GANs back — and it does so by reusing the U-Net and the standard regression loss you already know.</div>
       </div>
 
       <div class="session" id="s29">
@@ -775,15 +878,18 @@ table.evtable td b{color:var(--text)}
         <h4>Transformer architecture</h4>
         <p class="sobj">Objective: understand attention and Vision Transformers.</p>
         <ul class="topics">
-          <li><b>Self-attention &amp; transformers</b> — relating all positions via scaled dot-product attention; no recurrence or convolution required.</li>
-          <li><b>Vision Transformers (ViT)</b> — split the image into patches, embed them as tokens, and process with a transformer encoder.</li>
-          <li><b>Hybrid models</b> — combining CNN feature extractors with transformer reasoning (e.g. DETR).</li>
-          <li><b>Applications</b> — classification, detection and generation under one attention-based umbrella.</li>
+          <li><b>Self-attention &amp; transformers</b> — every token emits a query, key and value; attention weights each token's value by the softmax-normalised similarity of its query to all keys, $\text{softmax}(QK^{\top}/\sqrt{d_k})V$. The $\sqrt{d_k}$ scaling keeps the dot products from saturating the softmax. Multi-head attention runs several in parallel; no recurrence or convolution is involved, so it parallelises fully.</li>
+          <li><b>Vision Transformers (ViT)</b> — cut the image into fixed patches (e.g. 16×16), linearly embed each as a token, add positional encodings (since attention is permutation-invariant), prepend a class token, and run a standard transformer encoder. With enough data it matches or beats CNNs.</li>
+          <li><b>Hybrid models</b> — combine a CNN feature extractor (strong local inductive bias, data-efficient) with transformer reasoning over those features (global context), e.g. DETR for end-to-end detection without hand-designed anchors/NMS.</li>
+          <li><b>Applications</b> — one attention-based backbone now spans classification, detection and generation, increasingly unifying the architectures of the whole field.</li>
         </ul>
-        <div class="fmla">Attention(Q,K,V) = softmax( Q Kᵀ / √d_k ) V</div>
+        <div class="fmla">Attention(Q,K,V) = softmax( Q Kᵀ / √d_k ) V &nbsp;·&nbsp; cost O(n²) in the number of tokens n</div>
+        <div class="keyidea"><b>Worked example:</b> a CNN pixel only "sees" distant pixels after stacking many layers (its receptive field grows linearly with depth); a single self-attention layer connects <em>every</em> patch to every other at once. The price is the $QK^{\top}$ matrix being $n\times n$ — quadratic in the token count, which is why patches (not pixels) are used and why long-sequence efficiency is an active research area.</div>
         <div class="keyidea"><b>Key idea:</b> self-attention gives a <em>global</em> receptive field in one layer — every patch can attend to every other — which is what convolution achieves only by stacking depth.</div>
+        <div class="callout"><span class="ct">Connects to</span>This is the captioning attention of Session 24 generalised: instead of a decoder attending to image regions, <em>every</em> token attends to every other. ViT's patches are the transformer analogue of a CNN's local windows, and hybrids fuse the two inductive biases.</div>
         <a class="demolink" href="index.html#architectures">Demo · 12 Vision Transformer</a>
-        <ul class="readings"><li><b>Vaswani et al. (Attention Is All You Need, 2017)</b>; <b>Dosovitskiy et al. (ViT, 2021)</b>; <b>Dive into Deep Learning</b> — attention &amp; transformers.</li></ul>
+        <ul class="readings"><li><b>Vaswani et al. (Attention Is All You Need, 2017)</b> — the transformer; <b>Dosovitskiy et al. (ViT, 2021)</b> — images as patch sequences; <b>Dive into Deep Learning</b> — attention &amp; transformers, with code.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> attention buys a global receptive field at quadratic cost in tokens — the central trade-off that shapes every modern vision-transformer design choice.</div>
       </div>
 
       <div class="session" id="s30">
@@ -791,27 +897,45 @@ table.evtable td b{color:var(--text)}
         <h4>Synthesis &amp; wrap-up</h4>
         <p class="sobj">Objective: integrate the course — from image formation to transformers — and close the project work.</p>
         <ul class="topics">
-          <li><b>End-to-end view</b> — tracing one pipeline from acquisition → processing → features → deep model → output, picking classical vs learned tools per stage.</li>
-          <li><b>Project consolidation &amp; outlook</b> — final-project guidance and the open frontiers (foundation/vision-language models, 3-D &amp; video, efficiency).</li>
+          <li><b>End-to-end view</b> — trace one real pipeline through every stage you have learned: acquire and calibrate (Modules 1–2) → pre-process and filter (Module 4) → detect features or segment (Module 5) → feed a deep model (Modules 6–7) → produce the output. At each stage you now choose deliberately between a classical, interpretable, data-light tool and a learned, powerful, data-hungry one.</li>
+          <li><b>Project consolidation &amp; outlook</b> — final-project guidance (scope, baseline-first, honest evaluation) and the open frontiers: foundation and vision-language models, 3-D and video understanding, and efficiency/deployment on constrained hardware.</li>
         </ul>
+        <div class="keyidea"><b>Worked example:</b> an autonomous-checkout system threads the whole course — calibrated cameras (S12–13) and depth (S8, S11) localise items in 3-D, classical segmentation (S19) or a learned detector (S26 YOLO) finds them, a CNN/ViT (S23, S29) classifies, and the geometry (S7) maps detections back to shelf positions. No single technique suffices; the architecture is the integration.</div>
         <div class="keyidea"><b>Key idea:</b> the field is one continuous story — geometry tells you <em>where</em>, processing tells you <em>what's there</em>, and learning tells you <em>what it means</em>; great systems combine all three.</div>
+        <div class="callout"><span class="ct">Exam &amp; project tip</span>For the final, be able to place any technique on the geometry/processing/learning map and justify a classical-vs-learned choice. For the projects, ship a working baseline early, measure it honestly, and document <em>why</em> you chose each component — that reasoning is what the rubrics reward.</div>
         <a class="demolink" href="index.html#hero">Review · All 17 demos</a>
         <a class="demolink" href="index.html#about">About the playground</a>
-        <ul class="readings"><li><b>Szeliski</b> — concluding chapters &amp; applications; revisit module readings for the final exam.</li></ul>
+        <ul class="readings"><li><b>Szeliski</b> — concluding chapters &amp; applications; revisit each module's readings for the final exam, prioritising the formulas on your one-page sheet.</li></ul>
+        <div class="keyidea"><b>Key takeaway:</b> the goal was never any single algorithm — it was the judgement to compose geometry, processing and learning into a system that solves a real vision problem.</div>
       </div>
     </div>
   </div>
 
   <!-- GLOSSARY -->
   <h2 class="sec" id="glossary">Key concepts — glossary</h2>
-  <p class="muted">Roughly 30 terms threaded through the course, in pipeline order. Each links conceptually to a session and, where relevant, a live demo.</p>
+  <p class="muted">Around 50 terms threaded through the course, in roughly pipeline order. Each links conceptually to a session and, where relevant, a live demo.</p>
   <dl class="glossary">
+    <div class="gterm"><dt>Image as a function I(x,y)</dt><dd>The basic model of a digital image: a function from pixel coordinates to intensity (plus channels for colour, time for video). Everything operates on this array. (S1)</dd></div>
+    <div class="gterm"><dt>Inverse problem</dt><dd>Recovering the 3-D scene/meaning from a 2-D projection; ill-posed, so priors, geometry or learned statistics are always needed. (S1)</dd></div>
+    <div class="gterm"><dt>Thin-lens equation</dt><dd>$1/f = 1/z_o + 1/z_i$ relating focal length, object and image distance; only the conjugate distance focuses sharply. (S2)</dd></div>
+    <div class="gterm"><dt>Aperture &amp; depth of field</dt><dd>The iris opening trades light intake against the depth range that appears sharp; wide aperture = bright but shallow DoF. (S2, S4)</dd></div>
+    <div class="gterm"><dt>Gamma encoding</dt><dd>$V_{out}=V_{in}^{\gamma}$ allocating more code values to dark tones to match the eye's response (encode ~1/2.2). (S4, S15)</dd></div>
+    <div class="gterm"><dt>Metamerism</dt><dd>Different spectra that excite the cones identically look the same — why three RGB primaries can fool the eye. (S3)</dd></div>
+    <div class="gterm"><dt>JPEG / DCT compression</dt><dd>Block discrete cosine transform + coarse quantization of high frequencies + entropy coding; lossy, exploits perceptual redundancy. (S3, S17)</dd></div>
     <div class="gterm"><dt>Homogeneous coordinates</dt><dd>Appending a scale coordinate so points are defined up to a non-zero factor; makes translation and perspective linear matrix operations. (S5)</dd></div>
+    <div class="gterm"><dt>Point–line duality (ℙ²)</dt><dd>Points and lines are both 3-vectors; $\mathbf{x}^{\top}\mathbf{l}=0$ for incidence, and the cross product does both join and meet. (S5)</dd></div>
+    <div class="gterm"><dt>Transformation hierarchy</dt><dd>Nested groups rigid ⊂ similarity ⊂ affine ⊂ projective (3/4/6/8 DOF); the DOF count sets how many correspondences you need. (S6)</dd></div>
     <div class="gterm"><dt>Pinhole camera</dt><dd>Ideal projection $x=f X/Z,\,y=fY/Z$; the geometric core of every camera model. (S2, S7)</dd></div>
     <div class="gterm"><dt>Intrinsics K</dt><dd>Focal lengths, principal point and skew — the camera's internal geometry estimated by calibration. (S7, S12–13)</dd></div>
     <div class="gterm"><dt>Extrinsics [R|t]</dt><dd>The camera's rotation and translation in the world — its pose. (S7)</dd></div>
     <div class="gterm"><dt>Homography</dt><dd>A 3×3 projective map between two images of a plane (or pure-rotation views); 8 DOF. (S6, S9–10, S20)</dd></div>
+    <div class="gterm"><dt>Projection matrix P = K[R|t]</dt><dd>The $3\times4$ map from world points to pixels; factors into intrinsics (what the camera is) and extrinsics (where it is). (S7)</dd></div>
     <div class="gterm"><dt>Epipolar geometry</dt><dd>The two-view constraint $x'^{\top}Fx=0$ that reduces correspondence search to a line. (S9–10)</dd></div>
+    <div class="gterm"><dt>Fundamental / essential matrix</dt><dd>$F$ relates two uncalibrated views; $E=K'^{\top}FK$ for calibrated cameras factors as $[t]_\times R$ into relative pose. (S9–10)</dd></div>
+    <div class="gterm"><dt>8-point / DLT algorithm</dt><dd>Linear estimation of $F$ or $H$ by stacking correspondences and solving $Ah=0$ via SVD; normalise coordinates first. (S10)</dd></div>
+    <div class="gterm"><dt>RANSAC</dt><dd>Random sample consensus: repeatedly fit a model to a minimal sample and keep the one with most inliers — robust to outlier matches. (S10, S20)</dd></div>
+    <div class="gterm"><dt>Bundle adjustment</dt><dd>Joint non-linear least-squares refinement of all camera and 3-D-point parameters minimising total reprojection error. (S10)</dd></div>
+    <div class="gterm"><dt>Rectification</dt><dd>Warping a stereo pair so epipolar lines become image rows, turning disparity into a 1-D per-row search. (S11)</dd></div>
     <div class="gterm"><dt>Disparity</dt><dd>Horizontal shift of a point between rectified stereo views; inversely proportional to depth. (S8, S11)</dd></div>
     <div class="gterm"><dt>Structure from motion</dt><dd>Recovering cameras and 3-D points from multiple views, refined by bundle adjustment. (S9–10)</dd></div>
     <div class="gterm"><dt>Optical flow</dt><dd>Apparent per-pixel motion field, constrained by brightness constancy $I_xu+I_yv+I_t=0$. (S8)</dd></div>
@@ -821,23 +945,43 @@ table.evtable td b{color:var(--text)}
     <div class="gterm"><dt>Histogram equalization</dt><dd>Remapping intensities by their CDF to maximise contrast. (S15, demo 5)</dd></div>
     <div class="gterm"><dt>Convolution</dt><dd>Sliding weighted sum $(I*K)(x,y)=\sum I(x-i,y-j)K(i,j)$; the atom of filtering and CNNs. (S16, demo 6)</dd></div>
     <div class="gterm"><dt>Separable filter</dt><dd>A 2-D kernel that factors into two 1-D passes, cutting cost from $O(k^2)$ to $O(2k)$. (S16)</dd></div>
+    <div class="gterm"><dt>Point operation (LUT)</dt><dd>A transform $s=T(r)$ depending only on a pixel's own value — fully described by a 1-D lookup curve (negative, log, gamma, stretch). (S15)</dd></div>
     <div class="gterm"><dt>Image gradient</dt><dd>$\nabla I=(I_x,I_y)$; magnitude marks edges, orientation their direction. (S8, S16, S18)</dd></div>
+    <div class="gterm"><dt>Aperture problem</dt><dd>From a local window only motion normal to an edge is observable; optical flow needs a smoothness/constant-flow assumption to recover full $(u,v)$. (S8)</dd></div>
+    <div class="gterm"><dt>Convolution theorem</dt><dd>Convolution in space equals multiplication of spectra; blurring/sharpening = applying a low/high-pass mask in the frequency domain. (S17)</dd></div>
     <div class="gterm"><dt>Edge detection</dt><dd>Locating intensity discontinuities (Sobel magnitude, Canny with NMS + hysteresis). (S16, S18–19, demo 8)</dd></div>
     <div class="gterm"><dt>Fourier transform (2-D DFT)</dt><dd>Image as a sum of spatial frequencies; filtering = shaping the spectrum. (S17, demo 7)</dd></div>
     <div class="gterm"><dt>Harris corner</dt><dd>Cornerness $R=\det(M)-k\,\mathrm{tr}(M)^2$ from the gradient second-moment matrix. (S18, demo 8)</dd></div>
     <div class="gterm"><dt>Otsu thresholding</dt><dd>Automatic binarization maximising between-class variance. (S19, demo 13)</dd></div>
     <div class="gterm"><dt>Morphology</dt><dd>Erode/dilate/open/close on binary images via a structuring element. (S15, demo 9)</dd></div>
     <div class="gterm"><dt>NCC / template matching</dt><dd>Brightness-invariant patch correlation for locating templates. (S20, demo 14)</dd></div>
+    <div class="gterm"><dt>Backpropagation</dt><dd>The chain rule applied layer by layer from the loss backward to compute every parameter's gradient; the engine of all deep training. (S21–22)</dd></div>
+    <div class="gterm"><dt>Conv output-size formula</dt><dd>$\text{out}=\lfloor(n+2p-k)/s\rfloor+1$ for input $n$, kernel $k$, padding $p$, stride $s$; essential for tracking feature-map dimensions. (S21)</dd></div>
+    <div class="gterm"><dt>ReLU &amp; activation</dt><dd>$\sigma(z)=\max(0,z)$ — the non-linearity that lets stacked layers represent non-linear functions without saturating gradients. (S21–22)</dd></div>
+    <div class="gterm"><dt>Translation equivariance</dt><dd>Shift the input and a CNN's feature maps shift identically — the inductive bias weight-sharing convolution provides. (S21)</dd></div>
     <div class="gterm"><dt>Pooling</dt><dd>Down-sampling (max/avg) that adds translation tolerance and shrinks feature maps. (S22, demo 11)</dd></div>
+    <div class="gterm"><dt>Softmax &amp; cross-entropy</dt><dd>Softmax turns scores into class probabilities; cross-entropy is the loss that trains classifiers and per-pixel segmenters. (S22, S25)</dd></div>
+    <div class="gterm"><dt>Inception / 1×1 convolution</dt><dd>Parallel multi-scale branches with 1×1 convs to mix channels and cut cost cheaply (GoogLeNet). (S23, demo 12)</dd></div>
     <div class="gterm"><dt>Receptive field</dt><dd>The input region influencing one activation; grows with depth, instant with attention. (S21–23, S29)</dd></div>
     <div class="gterm"><dt>Residual connection</dt><dd>$y=F(x)+x$ shortcut that lets very deep networks train (ResNet). (S23, demo 12)</dd></div>
     <div class="gterm"><dt>Encoder–decoder (U-Net)</dt><dd>Contracting + expanding paths with skip connections for dense (segmentation) output. (S23, S25, demo 12)</dd></div>
+    <div class="gterm"><dt>Recurrence (RNN/GRU/LSTM)</dt><dd>State carried across sequence steps with shared weights; gates (GRU/LSTM) preserve long-range memory against vanishing gradients. (S24)</dd></div>
+    <div class="gterm"><dt>Attention</dt><dd>A softmax-weighted, differentiable lookup that lets a model focus on the most relevant inputs; first met in captioning. (S24, S29)</dd></div>
+    <div class="gterm"><dt>Semantic vs instance segmentation</dt><dd>Per-pixel class labels vs per-pixel labels that also separate individual objects (masks per instance). (S25, demo 13)</dd></div>
     <div class="gterm"><dt>IoU &amp; NMS</dt><dd>Intersection-over-union overlap metric and non-max suppression to prune duplicate detections. (S25–26, demo 14)</dd></div>
+    <div class="gterm"><dt>YOLO / one-stage detection</dt><dd>Predicts all boxes + classes in a single grid-regression pass; fast (real-time) at some accuracy cost. (S26, demo 14)</dd></div>
+    <div class="gterm"><dt>Autoencoder &amp; PCA</dt><dd>A bottleneck that compresses then reconstructs; PCA is the optimal linear case, an autoencoder its non-linear generalisation. (S27, demo 16)</dd></div>
+    <div class="gterm"><dt>ELBO &amp; reparameterization</dt><dd>The VAE objective (reconstruction − KL) and the trick $z=\mu+\sigma\epsilon$ that keeps sampling differentiable. (S27)</dd></div>
     <div class="gterm"><dt>Latent space</dt><dd>Low-dimensional code an autoencoder/VAE maps to; smooth in VAEs so interpolation is meaningful. (S27, demos 16–17)</dd></div>
+    <div class="gterm"><dt>Autoregressive model</dt><dd>Factorises $p(x)=\prod_i p(x_i\mid x_{&lt;i})$, generating pixels one at a time (PixelRNN/CNN); exact likelihood, slow sampling. (S27)</dd></div>
+    <div class="gterm"><dt>Mode collapse</dt><dd>A GAN failure where the generator produces only a few varieties of sample, losing diversity. (S28, demo 17)</dd></div>
     <div class="gterm"><dt>GAN</dt><dd>Generator vs discriminator min-max game producing sharp samples. (S28, demo 17)</dd></div>
     <div class="gterm"><dt>Diffusion model</dt><dd>Generation by learning to reverse a gradual noising process. (S28, demo 17)</dd></div>
     <div class="gterm"><dt>Self-attention</dt><dd>$\mathrm{softmax}(QK^{\top}/\sqrt{d_k})V$ relating all positions; the basis of transformers/ViT. (S29, demo 12)</dd></div>
     <div class="gterm"><dt>Vision Transformer (ViT)</dt><dd>Image as a sequence of patch tokens processed by a transformer encoder. (S29, demo 12)</dd></div>
+    <div class="gterm"><dt>Patch tokens &amp; positional encoding</dt><dd>ViT splits the image into embedded patches (tokens) and adds positional encodings because attention is otherwise order-agnostic. (S29)</dd></div>
+    <div class="gterm"><dt>CNN–transformer hybrid</dt><dd>A CNN front end (local, data-efficient) feeding transformer reasoning (global context), e.g. DETR for anchor-free detection. (S29)</dd></div>
+    <div class="gterm"><dt>Inductive bias</dt><dd>Built-in assumptions a model makes (locality/weight-sharing in CNNs, global relations in transformers) that shape what it learns from limited data. (S21, S29)</dd></div>
   </dl>
 
   <!-- BIBLIOGRAPHY -->
