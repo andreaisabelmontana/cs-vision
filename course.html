@@ -1,0 +1,878 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Course Structure — AI: Computer Vision · CS Vision</title>
+<link rel="stylesheet" href="css/styles.css" />
+<!-- KaTeX (optional) — formulas degrade to readable plain text if it fails to load -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>
+/* ── course-page-only additions; reuse the dark theme from styles.css ── */
+.course-wrap{max-width:1080px;margin:0 auto;padding:22px}
+.course-hero{background:linear-gradient(135deg,#161b22,#1c2230);border:1px solid var(--border);
+  border-radius:12px;padding:26px 28px;margin-bottom:20px}
+.course-hero h1{margin:0 0 6px;font-size:26px;color:var(--text);letter-spacing:.3px}
+.course-hero .tagline{color:var(--muted);font-size:14px;margin:0 0 14px}
+.course-hero .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+.coursenav{position:sticky;top:50px;z-index:15;background:#0a0e14ee;backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--border);padding:8px 14px;display:flex;gap:6px;flex-wrap:wrap;
+  margin:-22px -22px 20px;align-items:center}
+.coursenav a{font-size:12px;color:var(--muted);padding:5px 9px;border-radius:6px;white-space:nowrap}
+.coursenav a:hover{background:var(--panel2);color:var(--accent);text-decoration:none}
+.coursenav .nav-sep{flex:1}
+.coursenav a.back{border:1px solid var(--border);color:var(--text)}
+.coursenav a.pdf{border:1px solid var(--accent);color:var(--accent)}
+
+.metagrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.metagrid .mcell{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.metagrid .mcell .k{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2)}
+.metagrid .mcell .v{font-size:14px;color:var(--text);margin-top:3px}
+
+h2.sec{font-size:20px;color:var(--accent);border-bottom:1px solid var(--border);
+  padding-bottom:8px;margin:34px 0 14px;scroll-margin-top:96px}
+h3.sub{color:var(--accent2);font-size:14px;margin:18px 0 8px}
+
+.objlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:8px}
+.objlist li{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:6px;padding:9px 12px;font-size:13.5px}
+
+/* weighting bars */
+.bars{display:grid;gap:10px;margin:12px 0}
+.bar-row{display:grid;grid-template-columns:200px 1fr 56px;gap:10px;align-items:center;font-size:13px}
+.bar-row .lbl{color:var(--text)}
+.bar-track{background:#0d1117;border:1px solid var(--border);border-radius:6px;height:16px;overflow:hidden}
+.bar-fill{height:100%;background:linear-gradient(90deg,#58a6ff,#7ee787)}
+.bar-row .pct{text-align:right;color:var(--accent2);font-family:Consolas,monospace}
+
+.assess-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:12px 0}
+.acard{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:14px}
+.acard .top{display:flex;justify-content:space-between;align-items:baseline}
+.acard .top b{color:var(--text);font-size:14px}
+.acard .top .w{color:var(--accent);font-family:Consolas,monospace;font-weight:600}
+.acard p{margin:8px 0 0;font-size:12.5px;color:#c9d1d9}
+
+.callout{background:#15233a;border:1px solid #284268;border-left:4px solid var(--accent);
+  border-radius:6px;padding:10px 14px;margin:14px 0;font-size:13px}
+.callout.warn{background:#2a1d1d;border-color:#5a2d2d;border-left-color:var(--danger)}
+.callout .ct{font-weight:600;color:var(--accent);display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.callout.warn .ct{color:var(--danger)}
+
+/* module blocks + timeline */
+.module{background:var(--panel);border:1px solid var(--border);border-radius:10px;
+  padding:18px 20px;margin:18px 0;scroll-margin-top:96px}
+.module > h3.mtitle{margin:0 0 4px;font-size:17px;color:var(--accent)}
+.module .mrange{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px}
+.module .moverview{margin:10px 0;font-size:13.5px;color:#c9d1d9}
+.outcomes{margin:10px 0;padding:0;list-style:none;display:grid;gap:6px}
+.outcomes li{font-size:12.5px;color:#c9d1d9;padding-left:18px;position:relative}
+.outcomes li::before{content:"▸";position:absolute;left:0;color:var(--accent2)}
+
+.timeline{position:relative;margin:16px 0 0;padding-left:26px;border-left:2px solid var(--border)}
+.session{position:relative;margin:0 0 22px}
+.session::before{content:"";position:absolute;left:-33px;top:3px;width:13px;height:13px;border-radius:50%;
+  background:var(--panel);border:2px solid var(--accent)}
+.session .snum{font-family:Consolas,monospace;font-size:11px;color:var(--accent2);letter-spacing:.5px}
+.session h4{margin:2px 0 4px;font-size:15px;color:var(--text)}
+.session .sobj{font-size:13px;color:#c9d1d9;margin:0 0 8px;font-style:italic}
+.topics{list-style:none;padding:0;margin:8px 0;display:grid;gap:7px}
+.topics li{font-size:13px;background:var(--panel2);border:1px solid var(--border);border-radius:6px;padding:8px 11px}
+.topics li b{color:var(--accent)}
+.fmla{font-family:Consolas,monospace;background:#0d1117;border:1px solid var(--border);border-radius:6px;
+  padding:7px 10px;margin:8px 0;color:var(--accent2);font-size:12.5px;overflow-x:auto}
+.keyidea{background:#15233a;border-left:3px solid var(--accent2);border-radius:5px;padding:8px 12px;
+  margin:8px 0;font-size:12.5px;color:#dbe6f0}
+.keyidea b{color:var(--accent2)}
+.demolink{display:inline-block;margin:6px 6px 0 0;font-size:12px;padding:4px 9px;border-radius:6px;
+  background:var(--panel2);border:1px solid var(--accent);color:var(--accent)}
+.demolink:hover{background:var(--accent);color:#0d1117;text-decoration:none}
+.readings{margin:8px 0 0;padding:0;list-style:none}
+.readings li{font-size:12px;color:var(--muted);padding:4px 0 4px 18px;position:relative;border-top:1px dashed var(--border)}
+.readings li:first-child{border-top:none}
+.readings li::before{content:"📖";position:absolute;left:0;font-size:11px}
+.readings li b{color:#c9d1d9;font-style:italic;font-weight:400}
+
+/* glossary */
+.glossary{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px;margin:14px 0}
+.gterm{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:11px 13px}
+.gterm dt{color:var(--accent);font-weight:600;font-size:13px;margin-bottom:4px}
+.gterm dd{margin:0;font-size:12.5px;color:#c9d1d9;line-height:1.5}
+
+/* bibliography */
+.biblio{list-style:none;padding:0;margin:14px 0;display:grid;gap:12px}
+.biblio li{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px}
+.biblio .title{color:var(--text);font-weight:600;font-style:italic}
+.biblio .author{color:var(--accent2)}
+.biblio .isbn{font-family:Consolas,monospace;font-size:11px;color:var(--muted)}
+.biblio .anno{margin-top:6px;font-size:12.5px;color:#c9d1d9}
+
+.coursefoot{border-top:1px solid var(--border);margin-top:36px;padding:20px 0 8px;color:var(--muted);font-size:12px;text-align:center}
+.coursefoot a{color:var(--accent)}
+
+table.evtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+table.evtable th,table.evtable td{border:1px solid var(--border);padding:8px 10px;text-align:left}
+table.evtable th{background:var(--panel2);color:var(--accent2);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+table.evtable td b{color:var(--text)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>CS&nbsp;Vision</h1>
+    <span class="sub">Course Structure — AI: Computer Vision</span>
+  </div>
+  <nav class="primary">
+    <a class="btn" href="index.html">← Interactive demos</a>
+  </nav>
+</header>
+
+<nav class="coursenav">
+  <a class="back" href="index.html">← Demos</a>
+  <a href="#overview">Overview</a>
+  <a href="#objectives">Objectives</a>
+  <a href="#methodology">Methodology</a>
+  <a href="#assessment">Assessment</a>
+  <a href="#program">Program</a>
+  <a href="#glossary">Key concepts</a>
+  <a href="#bibliography">Bibliography</a>
+  <span class="nav-sep"></span>
+  <a class="pdf" href="SYLLABUS.pdf" target="_blank" rel="noopener">📄 Official syllabus (PDF)</a>
+</nav>
+
+<div class="course-wrap">
+
+  <!-- HERO -->
+  <section class="course-hero" id="top">
+    <h1>AI: Computer Vision</h1>
+    <p class="tagline">Bachelor in Computer Science &amp; Artificial Intelligence (BCSAI) · IE University · 30-session syllabus, mapped to the interactive playground.</p>
+    <p class="muted small" style="margin:0">This page is a deep, study-oriented companion to the official syllabus: every module, every session, the core mathematics, and direct links into the 17 live demos. It does not replace the official <a href="SYLLABUS.pdf" target="_blank" rel="noopener">syllabus PDF</a> — it explains and connects it.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#program">Jump to the full program →</a>
+      <a class="btn" href="index.html">Open the interactive demos</a>
+      <a class="btn" href="#glossary">Key-concepts glossary</a>
+    </div>
+    <div class="metagrid">
+      <div class="mcell"><div class="k">Code</div><div class="v">AICV-CSAI.3.M.A</div></div>
+      <div class="mcell"><div class="k">Area</div><div class="v">Computer Science</div></div>
+      <div class="mcell"><div class="k">Credits</div><div class="v">6.0 ECTS</div></div>
+      <div class="mcell"><div class="k">Sessions</div><div class="v">30 (live, in-person)</div></div>
+      <div class="mcell"><div class="k">Year / Course</div><div class="v">25–26 · Third year</div></div>
+      <div class="mcell"><div class="k">Semester</div><div class="v">2nd</div></div>
+      <div class="mcell"><div class="k">Category</div><div class="v">Compulsory</div></div>
+      <div class="mcell"><div class="k">Language</div><div class="v">English</div></div>
+      <div class="mcell"><div class="k">Workload</div><div class="v">150 h total</div></div>
+      <div class="mcell"><div class="k">Professor</div><div class="v">Dr. Rubén Sánchez García</div></div>
+    </div>
+  </section>
+
+  <!-- OVERVIEW -->
+  <h2 class="sec" id="overview">Course overview</h2>
+  <p>Vision plays an essential role in human perception, so understanding and automating the tasks that rely on it is one of the most consequential scientific challenges today — with applications across industrial automation, autonomous vehicles, precision agriculture, and e-health. <b>Computer Vision</b> is the engineering field that takes on this challenge: extracting a high-level understanding of the world from digital images and videos.</p>
+  <p>This course is an introduction to the most relevant topics in Computer Vision and their engineering. It deliberately integrates <b>traditional</b> (geometry, optics, filtering, classical detectors) and <b>modern, machine-learning-driven</b> approaches (CNNs, transformers, generative models). The goal is a solid foundation that lets you build sophisticated applications and manage complex CV projects — from how an image is <em>formed and encoded</em>, through how it is <em>processed and analysed</em>, to the <em>deep models</em> that now define the state of the art.</p>
+  <div class="callout">
+    <span class="ct">How to use this page</span>
+    The program below is organised into <b>seven thematic modules</b> spanning the 30 sessions. Each session lists its learning objective, an explanation of every topic, the core CV concept or formula where the material is technical, a "key idea" takeaway, and links into the matching <a href="index.html">live demo</a>. Read it alongside the slides; experiment in the playground; verify your intuition against the math.
+  </div>
+
+  <div class="metagrid">
+    <div class="mcell"><div class="k">Professor</div><div class="v">Dr. Rubén Sánchez García</div></div>
+    <div class="mcell"><div class="k">Email</div><div class="v"><a href="mailto:rsanchezgarcia@faculty.ie.edu">rsanchezgarcia@faculty.ie.edu</a></div></div>
+    <div class="mcell"><div class="k">Office hours</div><div class="v">On request, by email</div></div>
+  </div>
+  <p class="muted small">Dr. Sánchez-García holds BScs in Biotechnology and Computer Science and an MSc in Biophysics; he completed his PhD (2020) at the CNB-CSIC / Autonomous University of Madrid, was a postdoctoral researcher in Statistics at the University of Oxford, and worked in the Sustaining-Innovation program at Astex Pharmaceuticals (Cambridge, UK). His research develops machine-learning algorithms for structural biology — deep learning for cryo-EM and structure-based drug discovery — with 30+ peer-reviewed publications and well-known tools including BIPSPI and DeepEMhancer.</p>
+
+  <!-- OBJECTIVES -->
+  <h2 class="sec" id="objectives">Learning objectives</h2>
+  <p>The course provides a solid basis for building sophisticated applications and managing complex projects in Computer Vision. Students gain a solid understanding of the essence of digital images and videos — from formation and codification to processing and storage — and learn the most relevant problems in CV today together with the best techniques known to address them.</p>
+  <ul class="objlist">
+    <li><b>Pose, discuss and solve</b> the most common Computer Vision problems, choosing appropriate classical or learned techniques.</li>
+    <li><b>Fluency in developing</b> Computer Vision applications in <b>Python</b> (OpenCV for classical pipelines, deep-learning frameworks for modern models).</li>
+    <li><b>Teamwork skills</b>: communication, coordination and leadership, exercised through the group project.</li>
+    <li><b>Conceptual mastery</b> of the full pipeline: image formation and sensing → geometric &amp; intensity transforms → filtering and frequency analysis → features, segmentation and detection → deep architectures, generative models and transformers.</li>
+  </ul>
+
+  <!-- METHODOLOGY -->
+  <h2 class="sec" id="methodology">Teaching methodology</h2>
+  <p>Knowledge is acquired mainly through lectures and put into practice individually via coding exercises and an individual project. The estimated 150-hour workload (6 ECTS) breaks down as follows:</p>
+  <div class="bars">
+    <div class="bar-row"><span class="lbl">Lectures</span><div class="bar-track"><div class="bar-fill" style="width:43.3%"></div></div><span class="pct">43.3%</span></div>
+    <div class="bar-row"><span class="lbl">Exercises / async / field work</span><div class="bar-track"><div class="bar-fill" style="width:40%"></div></div><span class="pct">40.0%</span></div>
+    <div class="bar-row"><span class="lbl">Group work</span><div class="bar-track"><div class="bar-fill" style="width:10%"></div></div><span class="pct">10.0%</span></div>
+    <div class="bar-row"><span class="lbl">Individual studying</span><div class="bar-track"><div class="bar-fill" style="width:6.7%"></div></div><span class="pct">6.7%</span></div>
+  </div>
+  <p class="muted small">Approx. hours: Lectures 65 h · Exercises/async/field 60 h · Group work 15 h · Individual study 10 h · <b>Total 150 h</b>.</p>
+  <div class="callout warn">
+    <span class="ct">AI policy — GenAI not permitted</span>
+    In this course the use of generative AI is <b>not permitted</b> unless the instructor states otherwise, because it would jeopardise acquisition of the course's fundamental knowledge and skills. Using AI-generated content for any assessment is treated as <b>academic misconduct</b> and may lead to failing the assignment or the course.
+  </div>
+
+  <!-- ASSESSMENT -->
+  <h2 class="sec" id="assessment">Assessment &amp; grading</h2>
+  <p>The course is graded on intermediate tests (solving CV problems and communicating progress through intermediate deliverables), an individual and a group project, class participation, and a final exam.</p>
+  <div class="bars">
+    <div class="bar-row"><span class="lbl">Final Exam</span><div class="bar-track"><div class="bar-fill" style="width:35%"></div></div><span class="pct">35%</span></div>
+    <div class="bar-row"><span class="lbl">Intermediate tests</span><div class="bar-track"><div class="bar-fill" style="width:30%"></div></div><span class="pct">30%</span></div>
+    <div class="bar-row"><span class="lbl">Individual work</span><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><span class="pct">15%</span></div>
+    <div class="bar-row"><span class="lbl">Group work</span><div class="bar-track"><div class="bar-fill" style="width:15%"></div></div><span class="pct">15%</span></div>
+    <div class="bar-row"><span class="lbl">Class participation</span><div class="bar-track"><div class="bar-fill" style="width:5%"></div></div><span class="pct">5%</span></div>
+  </div>
+  <div class="assess-cards">
+    <div class="acard"><div class="top"><b>Final Exam</b><span class="w">35%</span></div><p>Comprehensive written exam. <b>Minimum passing grade of 3.5</b> required on this component for the course to pass.</p></div>
+    <div class="acard"><div class="top"><b>Intermediate tests</b><span class="w">30%</span></div><p>Solve Computer Vision problems and communicate progress through intermediate deliverables across the semester (continuous evaluation).</p></div>
+    <div class="acard"><div class="top"><b>Individual work</b><span class="w">15%</span></div><p>Individual project / coding exercises building CV applications in Python.</p></div>
+    <div class="acard"><div class="top"><b>Group work</b><span class="w">15%</span></div><p>Team project exercising communication, coordination and leadership.</p></div>
+    <div class="acard"><div class="top"><b>Class participation</b><span class="w">5%</span></div><p>Engagement during the live in-person sessions.</p></div>
+  </div>
+  <div class="callout warn">
+    <span class="ct">Pass, attendance &amp; re-sit rules</span>
+    <b>Attendance:</b> students who do not meet the <b>80% attendance rule</b> fail both the ordinary and extraordinary calls for the year and must re-enrol (re-take) the next academic year — no re-sit opportunity.<br>
+    <b>Calls:</b> four chances total across two consecutive academic years (ordinary + extraordinary/June–July re-sits).<br>
+    <b>Re-sit:</b> the June/July re-sit is a single comprehensive exam (physical presence in Segovia or Madrid required); the grade depends on that exam only — continuous evaluation is not counted. Pass with ≥ 5; <b>maximum grade 8.0</b> ("notable"). Retakers (3rd call) may reach a maximum of 10.0 and must confirm specific criteria with the assigned professor.<br>
+    <b>Review:</b> grade appeals require attending the post-exam review session first. Failing more than 18 ECTS in a year after re-sits leads to being asked to leave the program.
+  </div>
+
+  <!-- PROGRAM -->
+  <h2 class="sec" id="program">Program — 30 sessions across 7 modules</h2>
+  <p class="muted">Every session below is live and in-person. Session titles and topics follow the official syllabus; explanations, formulas, "key ideas", and demo links are study aids added for this companion site.</p>
+
+  <!-- ───────────── MODULE 1 ───────────── -->
+  <div class="module" id="module-1">
+    <span class="mrange">Module 1 · Sessions 1–4</span>
+    <h3 class="mtitle">Foundations &amp; Computer-Vision Engineering</h3>
+    <p class="moverview">What computer vision is, where it sits among neighbouring fields, and the physical front end of every system: light, optics, sensors, colour, encoding, and the practical engineering of getting images and video streams into a program. This is the "how an image comes to exist" half of the course's image-formation story.</p>
+    <ul class="outcomes">
+      <li>Situate CV relative to image processing, graphics, photogrammetry and machine learning, and recount its historical arc.</li>
+      <li>Explain illumination, optics (including fisheye/omnidirectional lenses) and sensor behaviour and how each shapes the captured image.</li>
+      <li>Reason about colour perception, colour spaces and image compression; take first steps in OpenCV.</li>
+      <li>Configure a real camera (focus, iris, exposure, white balance, gamma) and stream it over the network (RTSP).</li>
+    </ul>
+
+    <div class="timeline">
+      <div class="session" id="s1">
+        <div class="snum">SESSION 1 · LIVE IN-PERSON</div>
+        <h4>Course presentation</h4>
+        <p class="sobj">Objective: define the field, fix the vocabulary, and survey what is and isn't possible today.</p>
+        <ul class="topics">
+          <li><b>Definition &amp; relationship with other disciplines</b> — CV recovers semantic/geometric information <em>from</em> images, the inverse of computer graphics (which renders images from a model); it overlaps image processing, photogrammetry, pattern recognition and ML.</li>
+          <li><b>Main concepts</b> — image as a function $I(x,y)$, the pipeline from acquisition to interpretation, and the notion of an ill-posed inverse problem.</li>
+          <li><b>Historical background</b> — from Roberts' blocks world (1963) and Marr's levels of analysis to the deep-learning inflection point (AlexNet, 2012).</li>
+          <li><b>State of the art</b> — detection, segmentation, depth, generation, and large vision-language models framing today's applications.</li>
+        </ul>
+        <div class="keyidea"><b>Key idea:</b> vision is an <em>inverse</em> problem — infer the 3-D world and its meaning from a 2-D projection — which is why priors, geometry and learning all matter.</div>
+        <a class="demolink" href="index.html#hero">Demo · Site overview</a>
+        <a class="demolink" href="index.html#image-formation">Demo · 1 Image formation</a>
+        <ul class="readings"><li><b>Szeliski, Computer Vision: Algorithms and Applications</b> — Ch. 1 (Introduction).</li><li><b>Forsyth &amp; Ponce, Computer Vision: A Modern Approach</b> — Ch. 1.</li></ul>
+      </div>
+
+      <div class="session" id="s2">
+        <div class="snum">SESSION 2 · LIVE IN-PERSON</div>
+        <h4>Computer Vision Engineering (I)</h4>
+        <p class="sobj">Objective: understand the optical and illumination physics that determine image quality.</p>
+        <ul class="topics">
+          <li><b>Basic illumination techniques &amp; sources</b> — front/back/structured lighting; controlling light is often cheaper than fixing the algorithm.</li>
+          <li><b>Camera elements &amp; optics fundamentals</b> — aperture, focal length, depth of field; the thin-lens relation $\tfrac{1}{f}=\tfrac{1}{z_o}+\tfrac{1}{z_i}$.</li>
+          <li><b>Fisheye &amp; omnidirectional cameras</b> — wide-FOV non-perspective projections and the radial distortion they introduce.</li>
+          <li><b>Sensors &amp; example applications</b> — CCD vs CMOS, the photon→charge→digital path, and where each lens/sensor choice is used.</li>
+        </ul>
+        <div class="fmla">Thin lens: 1/f = 1/z_o + 1/z_i &nbsp;·&nbsp; FOV ≈ 2·arctan(sensor_size / 2f)</div>
+        <div class="keyidea"><b>Key idea:</b> the image you analyse is already the product of physics choices — lighting, lens and sensor — made before a single line of code runs.</div>
+        <a class="demolink" href="index.html#image-sensing">Demo · 3 Image sensing</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.1–2.3 (image formation, photometric &amp; optical models).</li><li><b>Livingstone, Vision and Art: The Biology of Seeing</b> — light &amp; the eye as biological motivation.</li></ul>
+      </div>
+
+      <div class="session" id="s3">
+        <div class="snum">SESSION 3 · LIVE IN-PERSON</div>
+        <h4>Computer Vision Engineering (II)</h4>
+        <p class="sobj">Objective: represent colour, encode images efficiently, and start coding with OpenCV.</p>
+        <ul class="topics">
+          <li><b>Color perception</b> — trichromatic human vision; why three channels suffice and metamerism arises.</li>
+          <li><b>Color spaces</b> — RGB, HSV, YCbCr, Lab; choosing a space that separates the property you care about (e.g. hue vs brightness).</li>
+          <li><b>Image compression</b> — redundancy removal; JPEG's block DCT + quantization + entropy coding (lossy) vs PNG (lossless).</li>
+          <li><b>First steps with OpenCV</b> — reading/displaying images, channel order (BGR), data types, basic manipulation.</li>
+        </ul>
+        <div class="keyidea"><b>Key idea:</b> JPEG already <em>is</em> a frequency-domain idea — it throws away high-frequency detail your eye barely notices, exactly the Fourier intuition from Module 3.</div>
+        <a class="demolink" href="index.html#intensity">Demo · 5 Intensity &amp; histogram</a>
+        <a class="demolink" href="index.html#image-input">Demo · Image input</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.3 (colour) &amp; Ch. 2.3.3 (compression).</li><li><b>Forsyth &amp; Ponce</b> — colour chapter.</li></ul>
+      </div>
+
+      <div class="session" id="s4">
+        <div class="snum">SESSION 4 · LIVE IN-PERSON</div>
+        <h4>Camera configuration &amp; streaming</h4>
+        <p class="sobj">Objective: operate a real camera and deliver a live video stream — the engineering glue of a CV system.</p>
+        <ul class="topics">
+          <li><b>Acquisition methods</b> — frame grabbing, triggering, and synchronisation.</li>
+          <li><b>Focus / Iris</b> — sharpness and the aperture's trade-off between light intake and depth of field.</li>
+          <li><b>Exposure, white balance, gamma</b> — exposure time vs gain (noise); white balance for colour constancy; gamma encoding $V_{out}=V_{in}^{\gamma}$ matching perceptual response.</li>
+          <li><b>Setting up an RTSP server</b> — packaging frames into a real-time streaming protocol for networked consumption.</li>
+        </ul>
+        <div class="fmla">Gamma: V_out = V_in ^ γ &nbsp;(encode ~1/2.2, decode ~2.2)</div>
+        <div class="keyidea"><b>Key idea:</b> exposure, white balance and gamma are point intensity transforms applied <em>in the camera</em> — the same maps you'll implement by hand in Session 15.</div>
+        <a class="demolink" href="index.html#intensity">Demo · 5 Intensity (gamma/stretch)</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.3.1 (sampling, aliasing, exposure) &amp; OpenCV video I/O docs.</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── MODULE 2 ───────────── -->
+  <div class="module" id="module-2">
+    <span class="mrange">Module 2 · Sessions 5–13</span>
+    <h3 class="mtitle">Geometry, 3-D Vision &amp; Calibration</h3>
+    <p class="moverview">The geometric backbone of computer vision: projective spaces, image transformations, the camera projection model, recovering 3-D structure from one or many views, depth sensing, and calibrating real cameras. This is where pixels become geometry.</p>
+    <ul class="outcomes">
+      <li>Work in projective spaces and homogeneous coordinates, and apply the 2-D transformation hierarchy (rigid → affine → projective).</li>
+      <li>Write the full camera model $x = K\,[R\,|\,t]\,X$ and reason about intrinsics, extrinsics and coordinate frames.</li>
+      <li>Recover depth and 3-D structure via stereo, structured light, time-of-flight, optical flow, homography and epipolar geometry.</li>
+      <li>Calibrate a camera with Zhang's method and judge calibration quality by reprojection error.</li>
+    </ul>
+
+    <div class="timeline">
+      <div class="session" id="s5">
+        <div class="snum">SESSION 5 · LIVE IN-PERSON</div>
+        <h4>Introduction to projective geometry</h4>
+        <p class="sobj">Objective: adopt homogeneous coordinates so projection and perspective become linear.</p>
+        <ul class="topics">
+          <li><b>Projective space ℙⁿ</b> — points as rays through the origin; equivalence up to scale, with points at infinity made explicit.</li>
+          <li><b>Projective space ℙ²</b> — the image plane: points and lines are dual 3-vectors; their cross product gives intersection/join.</li>
+          <li><b>Projective space ℙ³</b> — the world space whose points the camera projects down to ℙ².</li>
+        </ul>
+        <div class="fmla">Homogeneous: (x, y) ↔ (x, y, 1) ~ (λx, λy, λ), λ ≠ 0</div>
+        <div class="keyidea"><b>Key idea:</b> moving to homogeneous coordinates turns the non-linear perspective division into a single matrix multiply — the trick that powers the whole geometry module.</div>
+        <a class="demolink" href="index.html#camera-model">Demo · 2 Camera model</a>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman, Multiple View Geometry</b> — Ch. 1–2 (projective geometry of 2-D/3-D).</li></ul>
+      </div>
+
+      <div class="session" id="s6">
+        <div class="snum">SESSION 6 · LIVE IN-PERSON</div>
+        <h4>Image transformations</h4>
+        <p class="sobj">Objective: classify and apply the 2-D transformation hierarchy on images.</p>
+        <ul class="topics">
+          <li><b>Scaling &amp; Translation</b> — resizing and shifting; translation needs the homogeneous extra row to be linear.</li>
+          <li><b>Rotation</b> — orthonormal $R$ preserving lengths and angles (rigid/Euclidean).</li>
+          <li><b>Affine</b> — 6-DOF map preserving parallelism (rotation + scale + shear + translation).</li>
+          <li><b>Perspective</b> — 8-DOF homography preserving straight lines but not parallelism; models a plane viewed from any angle.</li>
+        </ul>
+        <div class="fmla">Affine: [x'; y'; 1] = [[a,b,t_x],[c,d,t_y],[0,0,1]] · [x; y; 1]</div>
+        <div class="keyidea"><b>Key idea:</b> each transform is a strictly larger group than the last (rigid ⊂ similarity ⊂ affine ⊂ projective); the DOF count tells you how many point correspondences you need to estimate it.</div>
+        <a class="demolink" href="index.html#geometric">Demo · 4 Geometric transforms</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 2.1.1 &amp; 3.6 (2-D transforms, warping).</li><li><b>Hartley &amp; Zisserman</b> — Ch. 2 (the transformation hierarchy).</li></ul>
+      </div>
+
+      <div class="session" id="s7">
+        <div class="snum">SESSION 7 · LIVE IN-PERSON</div>
+        <h4>Image acquisition model</h4>
+        <p class="sobj">Objective: write the complete pixel-from-world projection equation.</p>
+        <ul class="topics">
+          <li><b>Lens models: pinhole, thin, thick</b> — ideal pinhole projection plus the corrections real lenses require.</li>
+          <li><b>Projection models</b> — perspective vs orthographic/weak-perspective approximations.</li>
+          <li><b>Intrinsic &amp; extrinsic parameters</b> — $K$ (focal lengths $f_x,f_y$, principal point $c_x,c_y$, skew) vs $[R\,|\,t]$ (camera pose).</li>
+          <li><b>Coordinate systems involved</b> — world → camera → image → pixel, and the transform chaining them.</li>
+        </ul>
+        <div class="fmla">x = K [R | t] X &nbsp;,&nbsp; K = [[f_x, s, c_x],[0, f_y, c_y],[0,0,1]] &nbsp;·&nbsp; pinhole: x = f·X/Z</div>
+        <div class="keyidea"><b>Key idea:</b> the camera matrix factorises cleanly into <em>what the camera is</em> (intrinsics $K$) and <em>where it is</em> (extrinsics $[R|t]$) — calibration estimates the first, pose estimation the second.</div>
+        <a class="demolink" href="index.html#image-formation">Demo · 1 Pinhole projection</a>
+        <a class="demolink" href="index.html#camera-model">Demo · 2 K[R|t]</a>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 6 (camera models).</li><li><b>Forsyth &amp; Ponce</b> — geometric camera models.</li></ul>
+      </div>
+
+      <div class="session" id="s8">
+        <div class="snum">SESSION 8 · LIVE IN-PERSON</div>
+        <h4>Three-dimensional vision I &amp; II</h4>
+        <p class="sobj">Objective: survey the cues and devices that recover depth from images.</p>
+        <ul class="topics">
+          <li><b>Human 3-D &amp; stereoscopic vision</b> — binocular disparity; depth $Z = f\,B / d$ from baseline $B$ and disparity $d$.</li>
+          <li><b>Structured light (projection)</b> — projecting a known pattern and decoding its deformation for dense depth.</li>
+          <li><b>Time of flight</b> — measuring light round-trip time, $Z = c\,\Delta t / 2$.</li>
+          <li><b>Depth from focus / shape from shading &amp; texture</b> — using blur, shading gradients and texture foreshortening as monocular depth cues.</li>
+          <li><b>Optical flow &amp; motion</b> — the brightness-constancy constraint $I_x u + I_y v + I_t = 0$ for tracking and motion detection.</li>
+        </ul>
+        <div class="fmla">Stereo depth: Z = f·B / d &nbsp;·&nbsp; Optical flow: I_x·u + I_y·v + I_t = 0</div>
+        <div class="keyidea"><b>Key idea:</b> there are many independent paths to depth — geometry (stereo), active sensing (structured light, ToF) and image cues (focus, shading, motion); robust systems fuse several.</div>
+        <a class="demolink" href="index.html#features">Demo · 8 Gradients (flow building block)</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 11–12 (stereo, 3-D reconstruction) &amp; Ch. 9 (motion/optical flow).</li><li><b>Hartley &amp; Zisserman</b> — stereo &amp; reconstruction.</li></ul>
+      </div>
+
+      <div class="session" id="s9">
+        <div class="snum">SESSION 9 · LIVE IN-PERSON</div>
+        <h4>Multiple view geometry</h4>
+        <p class="sobj">Objective: relate two or more views algebraically.</p>
+        <ul class="topics">
+          <li><b>Single &amp; dual-camera models</b> — one projection matrix vs a stereo pair sharing a rigid relative pose.</li>
+          <li><b>Homography</b> — a 3×3 $H$ mapping one image of a plane to another (also pure-rotation panoramas).</li>
+          <li><b>Epipolar geometry</b> — the fundamental matrix $F$ with $x'^{\!\top} F x = 0$ constraining a point to a line in the other view.</li>
+          <li><b>Structure from motion</b> — jointly recovering cameras and 3-D points from many views.</li>
+        </ul>
+        <div class="fmla">Epipolar constraint: x'ᵀ F x = 0 &nbsp;·&nbsp; Planar map: x' = H x</div>
+        <div class="keyidea"><b>Key idea:</b> the epipolar constraint collapses a 2-D correspondence search to a 1-D line search — the single most useful geometric fact in stereo and SfM.</div>
+        <a class="demolink" href="index.html#geometric">Demo · 4 Projective/homography</a>
+        <a class="demolink" href="index.html#detection">Demo · 14 Matching (correspondence)</a>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 9–11 (epipolar geometry, F, trifocal &amp; SfM).</li></ul>
+      </div>
+
+      <div class="session" id="s10">
+        <div class="snum">SESSION 10 · LIVE IN-PERSON</div>
+        <h4>Multiple view geometry (continued)</h4>
+        <p class="sobj">Objective: deepen the two-view tools and complete the SfM pipeline.</p>
+        <ul class="topics">
+          <li><b>Single &amp; dual-camera models</b> — revisited with estimation in practice (normalised coordinates, RANSAC robustness).</li>
+          <li><b>Homography</b> — DLT estimation from ≥ 4 correspondences and its applications (rectification, mosaicing).</li>
+          <li><b>Epipolar geometry</b> — estimating $F$/$E$ (8-point algorithm) and decomposing $E$ into relative $R, t$.</li>
+          <li><b>Structure from motion</b> — triangulation + bundle adjustment refining cameras and points jointly.</li>
+        </ul>
+        <div class="fmla">Essential: E = [t]_× R &nbsp;·&nbsp; F = K'⁻ᵀ E K⁻¹</div>
+        <div class="keyidea"><b>Key idea:</b> bundle adjustment is the workhorse optimiser of 3-D vision — it minimises total reprojection error over all cameras and points at once.</div>
+        <a class="demolink" href="index.html#detection">Demo · 14 Template matching</a>
+        <ul class="readings"><li><b>Hartley &amp; Zisserman</b> — Ch. 11 (estimating F) &amp; Appendix on bundle adjustment.</li><li><b>Szeliski</b> — Ch. 11 (SfM).</li></ul>
+      </div>
+
+      <div class="session" id="s11">
+        <div class="snum">SESSION 11 · LIVE IN-PERSON</div>
+        <h4>Depth cameras</h4>
+        <p class="sobj">Objective: configure and capture from real depth-sensing rigs.</p>
+        <ul class="topics">
+          <li><b>Stereoscopic camera configuration &amp; capture</b> — calibrating/rectifying a stereo pair so disparity maps directly to depth.</li>
+          <li><b>Structured-light camera configuration &amp; capture</b> — projector–camera setup, pattern choice, and decoding to a depth map.</li>
+        </ul>
+        <div class="keyidea"><b>Key idea:</b> a rectified stereo pair turns the epipolar lines horizontal, so depth becomes a simple per-row 1-D disparity search.</div>
+        <a class="demolink" href="index.html#camera-model">Demo · 2 Camera model</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 12 (depth sensing, active illumination).</li></ul>
+      </div>
+
+      <div class="session" id="s12">
+        <div class="snum">SESSION 12 · LIVE IN-PERSON</div>
+        <h4>Camera calibration I</h4>
+        <p class="sobj">Objective: understand how intrinsics and distortion are estimated.</p>
+        <ul class="topics">
+          <li><b>Introduction &amp; tools</b> — why calibration matters and the OpenCV calibration toolchain.</li>
+          <li><b>Zhang's method</b> — a planar checkerboard at several poses yields homographies that constrain $K$ and lens distortion.</li>
+          <li><b>Calibration process issues</b> — pattern coverage, degenerate poses, and distortion-model selection.</li>
+        </ul>
+        <div class="keyidea"><b>Key idea:</b> Zhang's flexible method needs only a printed checkerboard waved at the camera — each planar view gives a homography that constrains the unknown intrinsics.</div>
+        <a class="demolink" href="index.html#camera-model">Demo · 2 Intrinsics K</a>
+        <ul class="readings"><li><b>Zhang (2000), "A flexible new technique for camera calibration"</b>; <b>Szeliski</b> Ch. 6.3.</li></ul>
+      </div>
+
+      <div class="session" id="s13">
+        <div class="snum">SESSION 13 · LIVE IN-PERSON</div>
+        <h4>Camera calibration II</h4>
+        <p class="sobj">Objective: run an end-to-end calibration and validate it.</p>
+        <ul class="topics">
+          <li><b>Pattern image acquisition</b> — capturing well-distributed checkerboard views.</li>
+          <li><b>Running the calibration process</b> — detecting corners, solving for $K$, distortion and per-view poses.</li>
+          <li><b>Checking reprojection error</b> — the RMS pixel error between detected and reprojected corners as the quality metric.</li>
+        </ul>
+        <div class="fmla">Reprojection error = (1/N) Σ ‖ x_i − project(K, R, t, X_i) ‖</div>
+        <div class="keyidea"><b>Key idea:</b> reprojection error in sub-pixel units is the honest yardstick — a calibration is only as good as the geometry it reproduces.</div>
+        <a class="demolink" href="index.html#camera-model">Demo · 2 Reprojection intuition</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 6.3 (calibration practice); OpenCV calibration tutorial.</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── MODULE 3 ───────────── -->
+  <div class="module" id="module-3">
+    <span class="mrange">Module 3 · Session 14</span>
+    <h3 class="mtitle">Mid-term checkpoint</h3>
+    <p class="moverview">A consolidation point: the mid-term exam closes the geometry-and-acquisition half of the course before the pivot to image processing and learning.</p>
+    <ul class="outcomes"><li>Demonstrate mastery of image formation, the projective transformation hierarchy, the full camera model, multi-view geometry and calibration.</li></ul>
+    <div class="timeline">
+      <div class="session" id="s14">
+        <div class="snum">SESSION 14 · LIVE IN-PERSON</div>
+        <h4>Mid-term exam</h4>
+        <p class="sobj">Objective: assess Sessions 1–13 — formation, optics, colour, projective geometry, the camera model, multi-view geometry and calibration.</p>
+        <ul class="topics"><li><b>Mid-term exam</b> — solving Computer Vision problems on the foundations and geometry material covered so far.</li></ul>
+        <div class="callout"><span class="ct">Study tip</span>Revisit the camera-model and geometric-transform demos and be able to derive each matrix by hand; most exam problems are variations on "given these parameters, where does this point project / how do these views relate?".</div>
+        <a class="demolink" href="index.html#camera-model">Review · 2 Camera model</a>
+        <a class="demolink" href="index.html#geometric">Review · 4 Geometric</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── MODULE 4 ───────────── -->
+  <div class="module" id="module-4">
+    <span class="mrange">Module 4 · Sessions 15–17</span>
+    <h3 class="mtitle">Image Processing — Point, Local &amp; Global Operations</h3>
+    <p class="moverview">Classical image processing organised by spatial scope: pixelwise (point) operations, neighbourhood (local/convolution) operations, and whole-image (global/Fourier) operations. These are the operators every later technique is built from.</p>
+    <ul class="outcomes">
+      <li>Apply point transforms (negatives, log, gamma, contrast stretch, histogram equalization, binarization) and read histograms.</li>
+      <li>Design and apply linear filters via convolution, exploit separability, and use orientable/band-pass filters.</li>
+      <li>Analyse images in the frequency domain with the 2-D DFT and interpret filtering as spectrum shaping.</li>
+    </ul>
+
+    <div class="timeline">
+      <div class="session" id="s15">
+        <div class="snum">SESSION 15 · LIVE IN-PERSON</div>
+        <h4>Pixelwise operations</h4>
+        <p class="sobj">Objective: transform each pixel independently via an intensity map $s = T(r)$.</p>
+        <ul class="topics">
+          <li><b>Pixelwise operations &amp; pixel transformations</b> — negative $s=L-1-r$, log $s=c\log(1+r)$, gamma $s=c\,r^{\gamma}$, contrast stretching.</li>
+          <li><b>Histogram equalization</b> — remapping intensities by the CDF to flatten the histogram and maximise global contrast.</li>
+          <li><b>Binarization</b> — thresholding to a 0/1 image, the gateway to morphology and connected components.</li>
+        </ul>
+        <div class="fmla">s = T(r) &nbsp;·&nbsp; equalize: s = round((L−1)·cdf(r)) &nbsp;·&nbsp; gamma: s = c·rᵞ</div>
+        <div class="keyidea"><b>Key idea:</b> a point operation depends only on a pixel's own value, so it is fully described by a 1-D lookup curve — and the histogram tells you which curve helps.</div>
+        <a class="demolink" href="index.html#intensity">Demo · 5 Intensity &amp; histogram</a>
+        <a class="demolink" href="index.html#binary">Demo · 9 Binarization</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.1 (point operators) &amp; 3.1.4 (histogram equalization).</li><li><b>Forsyth &amp; Ponce</b> — early image-processing chapter.</li></ul>
+      </div>
+
+      <div class="session" id="s16">
+        <div class="snum">SESSION 16 · LIVE IN-PERSON</div>
+        <h4>Local operations</h4>
+        <p class="sobj">Objective: process each pixel using its neighbourhood via convolution.</p>
+        <ul class="topics">
+          <li><b>Introduction</b> — neighbourhood operators and the convolution definition.</li>
+          <li><b>Separable filters</b> — a 2-D Gaussian factorises into two 1-D passes, cutting cost from $O(k^2)$ to $O(2k)$ per pixel.</li>
+          <li><b>Linear filtering examples</b> — box/Gaussian blur, Sobel/Laplacian edges, sharpening.</li>
+          <li><b>Band-pass &amp; orientable filters; other local operators</b> — DoG band-pass, steerable filters, and non-linear ops (median, bilateral).</li>
+        </ul>
+        <div class="fmla">(I * K)(x,y) = Σ_i Σ_j I(x−i, y−j) · K(i,j)</div>
+        <div class="keyidea"><b>Key idea:</b> convolution is the atom of classical vision <em>and</em> of CNNs — the only thing that changes later is that the kernel weights are learned rather than designed.</div>
+        <a class="demolink" href="index.html#local">Demo · 6 Convolution playground</a>
+        <a class="demolink" href="index.html#features">Demo · 8 Sobel/DoG</a>
+        <a class="demolink" href="index.html#cnn">Demo · 11 CNN (learned kernels)</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.2 (linear filtering, separability) &amp; 3.3 (non-linear filters).</li></ul>
+      </div>
+
+      <div class="session" id="s17">
+        <div class="snum">SESSION 17 · LIVE IN-PERSON</div>
+        <h4>Global operations</h4>
+        <p class="sobj">Objective: analyse and filter images in the frequency domain.</p>
+        <ul class="topics">
+          <li><b>Fourier transform &amp; the 2-D (bidimensional) DFT</b> — decomposing an image into spatial-frequency components.</li>
+          <li><b>DFT interpretation</b> — magnitude (how much of each frequency) vs phase (where structure sits); low frequencies = smooth regions, high = edges/texture.</li>
+          <li><b>Other global transformations</b> — DCT (compression), wavelets (multi-scale).</li>
+        </ul>
+        <div class="fmla">F(u,v) = Σ_x Σ_y I(x,y) · e^( −j2π (ux/M + vy/N) )</div>
+        <div class="keyidea"><b>Key idea:</b> by the convolution theorem, blurring/sharpening in space is just multiplying the spectrum by a low-/high-pass mask — the same operation seen from the other domain.</div>
+        <a class="demolink" href="index.html#fourier">Demo · 7 2-D DFT &amp; filtering</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 3.4 (Fourier transforms) &amp; 3.5 (pyramids/wavelets).</li><li><b>Forsyth &amp; Ponce</b> — frequency-domain chapter.</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── MODULE 5 ───────────── -->
+  <div class="module" id="module-5">
+    <span class="mrange">Module 5 · Sessions 18–20</span>
+    <h3 class="mtitle">Classical Features, Recognition &amp; Matching</h3>
+    <p class="moverview">Detecting salient structure (corners, edges, blobs), segmenting and recognising objects with classical pipelines, and matching images via templates and feature correspondences + homography — the pre-deep-learning toolkit that still underpins SLAM, panoramas and registration.</p>
+    <ul class="outcomes">
+      <li>Detect corners (Harris &amp; Stephens), edges and curvature-based salient features.</li>
+      <li>Approach object recognition through edges, thresholding and region-based segmentation.</li>
+      <li>Match images with template matching and with feature correspondences + homography estimation.</li>
+    </ul>
+
+    <div class="timeline">
+      <div class="session" id="s18">
+        <div class="snum">SESSION 18 · LIVE IN-PERSON</div>
+        <h4>Salient feature detection</h4>
+        <p class="sobj">Objective: find repeatable, distinctive image points.</p>
+        <ul class="topics">
+          <li><b>Introduction &amp; definitions</b> — what makes a feature "good": repeatability, distinctiveness, locality, invariance.</li>
+          <li><b>Surface curvature &amp; curvature-based methods</b> — corners as points of high curvature in the intensity surface.</li>
+          <li><b>Harris &amp; Stephens method</b> — the second-moment matrix $M$; cornerness $R = \det(M) - k\,\mathrm{tr}(M)^2$.</li>
+          <li><b>Gradient-based methods</b> — building detectors/descriptors from image gradients $\nabla I = (I_x, I_y)$.</li>
+        </ul>
+        <div class="fmla">M = Σ_w [[I_x², I_xI_y],[I_xI_y, I_y²]] &nbsp;·&nbsp; R = det(M) − k·tr(M)²</div>
+        <div class="keyidea"><b>Key idea:</b> a corner is where intensity changes in <em>two</em> directions, i.e. both eigenvalues of the local gradient covariance $M$ are large — Harris just scores that cheaply.</div>
+        <a class="demolink" href="index.html#features">Demo · 8 Harris / DoG / Canny</a>
+        <ul class="readings"><li><b>Harris &amp; Stephens (1988)</b>; <b>Szeliski</b> Ch. 7.1 (feature detectors).</li></ul>
+      </div>
+
+      <div class="session" id="s19">
+        <div class="snum">SESSION 19 · LIVE IN-PERSON</div>
+        <h4>Intro to object recognition</h4>
+        <p class="sobj">Objective: separate objects from background with classical segmentation.</p>
+        <ul class="topics">
+          <li><b>Introduction</b> — recognition vs detection vs segmentation framed.</li>
+          <li><b>Edge detection-based techniques</b> — closing edge maps into object boundaries.</li>
+          <li><b>Image thresholding</b> — global/adaptive thresholds; <b>Otsu</b> maximising between-class variance to pick the level automatically.</li>
+          <li><b>Region-based algorithms</b> — region growing, split-and-merge, connected components.</li>
+        </ul>
+        <div class="fmla">Otsu: t* = argmax_t σ²_between(t) = argmax_t w₀w₁(μ₀−μ₁)²</div>
+        <div class="keyidea"><b>Key idea:</b> segmentation can be driven by <em>discontinuity</em> (edges) or <em>similarity</em> (regions) — two complementary views of the same partition problem.</div>
+        <a class="demolink" href="index.html#segmentation">Demo · 13 Otsu / region / edge / k-means</a>
+        <a class="demolink" href="index.html#binary">Demo · 9 Connected components</a>
+        <ul class="readings"><li><b>Otsu (1979)</b>; <b>Szeliski</b> Ch. 5 (segmentation); <b>Forsyth &amp; Ponce</b> segmentation chapters.</li></ul>
+      </div>
+
+      <div class="session" id="s20">
+        <div class="snum">SESSION 20 · LIVE IN-PERSON</div>
+        <h4>Image matching techniques</h4>
+        <p class="sobj">Objective: locate and align content across images.</p>
+        <ul class="topics">
+          <li><b>Template matching</b> — sliding a patch and scoring with SSD or normalised cross-correlation (NCC), robust to brightness changes.</li>
+          <li><b>Feature matching + homography</b> — matching descriptors, rejecting outliers with RANSAC, then fitting $H$ to align/stitch.</li>
+        </ul>
+        <div class="fmla">NCC(u,v) = Σ (I−Ī)(T−T̄) / sqrt( Σ(I−Ī)² · Σ(T−T̄)² )</div>
+        <div class="keyidea"><b>Key idea:</b> template matching is brittle to rotation/scale; feature matching + RANSAC + homography is the robust upgrade that makes panoramas and registration work.</div>
+        <a class="demolink" href="index.html#detection">Demo · 14 NCC / SSD matching</a>
+        <a class="demolink" href="index.html#geometric">Demo · 4 Homography warp</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 7.1–7.2 (matching) &amp; Ch. 8 (image alignment/stitching).</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── MODULE 6 ───────────── -->
+  <div class="module" id="module-6">
+    <span class="mrange">Module 6 · Sessions 21–24</span>
+    <h3 class="mtitle">Deep Learning for Vision — CNNs &amp; Architectures</h3>
+    <p class="moverview">The deep-learning core: convolutional neural networks from first principles, implementation in modern frameworks, the canonical architecture lineage (AlexNet → VGG → GoogLeNet → ResNet → U-Net), and recurrent/attention models for sequence and captioning tasks.</p>
+    <ul class="outcomes">
+      <li>Explain CNN building blocks — convolution, non-linearity, pooling — and why they suit images.</li>
+      <li>Implement a CNN from scratch and in a deep-learning framework.</li>
+      <li>Compare landmark architectures and the ideas they introduced (depth, 1×1 convs, residuals, encoder–decoder).</li>
+      <li>Describe RNN/GRU/LSTM models and attention-based image captioning.</li>
+    </ul>
+
+    <div class="timeline">
+      <div class="session" id="s21">
+        <div class="snum">SESSION 21 · LIVE IN-PERSON</div>
+        <h4>Convolutional neural networks</h4>
+        <p class="sobj">Objective: motivate and define the CNN.</p>
+        <ul class="topics">
+          <li><b>Introduction</b> — from the MLP (fully-connected, ignores spatial structure) to weight-shared convolutions.</li>
+          <li><b>Applications</b> — classification, detection, segmentation, and beyond.</li>
+          <li><b>Functional perspective</b> — a CNN as a composition of layers; learning by gradient descent through backprop.</li>
+        </ul>
+        <div class="fmla">conv: y = σ(W * x + b) &nbsp;·&nbsp; out = (n + 2p − k)/s + 1</div>
+        <div class="keyidea"><b>Key idea:</b> convolution gives CNNs <em>local connectivity</em>, <em>weight sharing</em> and <em>translation equivariance</em> — far fewer parameters than a dense net, and the right inductive bias for images.</div>
+        <a class="demolink" href="index.html#perceptron">Demo · 10 MLP playground</a>
+        <a class="demolink" href="index.html#cnn">Demo · 11 CNN feature maps</a>
+        <ul class="readings"><li><b>Drummy et al., Dive into Deep Learning</b> — CNN chapters; <b>Szeliski</b> Ch. 5.3–5.4.</li></ul>
+      </div>
+
+      <div class="session" id="s22">
+        <div class="snum">SESSION 22 · LIVE IN-PERSON</div>
+        <h4>Convolutional neural networks II</h4>
+        <p class="sobj">Objective: build a CNN in practice.</p>
+        <ul class="topics">
+          <li><b>Deep learning frameworks</b> — tensors, autograd, the train loop (forward → loss → backward → step), GPUs.</li>
+          <li><b>Implementing a CNN from scratch</b> — stacking conv/activation/pool/FC layers, choosing loss and optimiser, and training.</li>
+        </ul>
+        <div class="fmla">max-pool 2×2: y(i,j) = max over 2×2 window &nbsp;·&nbsp; ReLU: σ(z)=max(0,z)</div>
+        <div class="keyidea"><b>Key idea:</b> pooling and strided convolution shrink spatial resolution while growing channel depth — the network trades "where" for "what" as it goes deeper.</div>
+        <a class="demolink" href="index.html#cnn">Demo · 11 Pooling &amp; activations</a>
+        <ul class="readings"><li><b>Dive into Deep Learning</b> — modern training; framework tutorials (PyTorch).</li></ul>
+      </div>
+
+      <div class="session" id="s23">
+        <div class="snum">SESSION 23 · LIVE IN-PERSON</div>
+        <h4>Convolutional neural networks III — advanced architectures</h4>
+        <p class="sobj">Objective: trace the landmark architectures and the ideas each contributed.</p>
+        <ul class="topics">
+          <li><b>AlexNet</b> — the 2012 ImageNet breakthrough: ReLU, dropout, GPU training at scale.</li>
+          <li><b>VGG</b> — depth via uniform stacks of small 3×3 convolutions.</li>
+          <li><b>GoogLeNet</b> — Inception modules and 1×1 convolutions for cheap channel mixing.</li>
+          <li><b>ResNet</b> — residual connections $y = F(x) + x$ enabling very deep networks.</li>
+          <li><b>U-Net</b> — symmetric encoder–decoder with skip connections for pixel-wise (segmentation) output.</li>
+        </ul>
+        <div class="fmla">Residual block: y = F(x, {W_i}) + x</div>
+        <div class="keyidea"><b>Key idea:</b> the residual shortcut lets gradients flow straight through, so "deeper" stops hurting — ResNet is why 100+ layer networks train at all.</div>
+        <a class="demolink" href="index.html#architectures">Demo · 12 LeNet/VGG/ResNet/U-Net/ViT</a>
+        <ul class="readings"><li><b>He et al. (ResNet, 2016)</b>; <b>Simonyan &amp; Zisserman (VGG)</b>; <b>Dive into Deep Learning</b> — modern CNNs.</li></ul>
+      </div>
+
+      <div class="session" id="s24">
+        <div class="snum">SESSION 24 · LIVE IN-PERSON</div>
+        <h4>Recurrent neural networks</h4>
+        <p class="sobj">Objective: model sequences and connect vision to language.</p>
+        <ul class="topics">
+          <li><b>Introduction</b> — recurrence $h_t = f(h_{t-1}, x_t)$ for variable-length sequences (e.g. video, captions).</li>
+          <li><b>GRU networks</b> — gated units mitigating vanishing gradients with fewer parameters than LSTM.</li>
+          <li><b>LSTM networks</b> — cell state plus input/forget/output gates for long-range dependencies.</li>
+          <li><b>Image captioning with attention</b> — a CNN encoder + RNN decoder that attends to image regions while generating words.</li>
+        </ul>
+        <div class="fmla">h_t = f(W·x_t + U·h_{t−1} + b) &nbsp;·&nbsp; attention: α = softmax(score(h, features))</div>
+        <div class="keyidea"><b>Key idea:</b> attention lets the decoder <em>look back</em> at the most relevant image regions for each word — the precursor of the transformer attention in Session 29.</div>
+        <a class="demolink" href="index.html#architectures">Demo · 12 Architectures (ViT/attention)</a>
+        <ul class="readings"><li><b>Dive into Deep Learning</b> — RNN/GRU/LSTM &amp; attention chapters; <b>Bishop, Pattern Recognition and Machine Learning</b> (sequence models background).</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- ───────────── MODULE 7 ───────────── -->
+  <div class="module" id="module-7">
+    <span class="mrange">Module 7 · Sessions 25–30</span>
+    <h3 class="mtitle">Detection, Segmentation, Generative Models &amp; Transformers</h3>
+    <p class="moverview">The modern frontier: dense prediction (detection, semantic/instance segmentation), training a real detector (YOLO), generative modelling (VAEs, PixelRNN/CNN, GANs, diffusion), and the attention/transformer revolution (ViT, hybrids) that now spans classification, detection and generation.</p>
+    <ul class="outcomes">
+      <li>Distinguish classification, localization, detection, semantic and instance segmentation, and the architectures for each.</li>
+      <li>Train a YOLO model for real-time object detection.</li>
+      <li>Explain generative families — VAE, autoregressive (PixelRNN/CNN), GAN, diffusion — and their trade-offs.</li>
+      <li>Describe self-attention, Vision Transformers and CNN–transformer hybrids, and their CV applications.</li>
+    </ul>
+
+    <div class="timeline">
+      <div class="session" id="s25">
+        <div class="snum">SESSION 25 · LIVE IN-PERSON</div>
+        <h4>Detection &amp; segmentation using Deep Learning</h4>
+        <p class="sobj">Objective: map each dense-prediction task to its network design.</p>
+        <ul class="topics">
+          <li><b>Semantic segmentation</b> — per-pixel class labels via encoder–decoder/FCN (e.g. U-Net) and per-pixel cross-entropy.</li>
+          <li><b>Classification + localization</b> — predicting a class plus a bounding box (classification + regression heads).</li>
+          <li><b>Object detection / instance segmentation</b> — many objects with boxes (Faster R-CNN, SSD, YOLO) and per-instance masks (Mask R-CNN); IoU and non-max suppression.</li>
+        </ul>
+        <div class="fmla">IoU = area(∩) / area(∪) &nbsp;·&nbsp; (used in NMS &amp; detection metrics)</div>
+        <div class="keyidea"><b>Key idea:</b> the four tasks form a ladder — "what" → "what + where (one)" → "what + where (many)" → "what + where + exact pixels" — each adding an output head, not a new paradigm.</div>
+        <a class="demolink" href="index.html#segmentation">Demo · 13 Segmentation</a>
+        <a class="demolink" href="index.html#detection">Demo · 14 Detection</a>
+        <a class="demolink" href="index.html#architectures">Demo · 12 U-Net</a>
+        <ul class="readings"><li><b>Szeliski</b> — Ch. 6 (recognition/detection); <b>Dive into Deep Learning</b> — object detection &amp; segmentation.</li></ul>
+      </div>
+
+      <div class="session" id="s26">
+        <div class="snum">SESSION 26 · LIVE IN-PERSON</div>
+        <h4>Detection &amp; segmentation using Deep Learning II</h4>
+        <p class="sobj">Objective: train a one-stage detector end-to-end.</p>
+        <ul class="topics">
+          <li><b>Training YOLO for object detection</b> — a single network predicting boxes + class probabilities over a grid in one pass; anchors, the multpart loss (localization + objectness + classification), and NMS at inference.</li>
+        </ul>
+        <div class="fmla">YOLO loss = λ_coord·L_box + L_obj + L_cls &nbsp;·&nbsp; one forward pass → all boxes</div>
+        <div class="keyidea"><b>Key idea:</b> YOLO reframes detection as a single regression over a grid, trading a little accuracy for real-time speed — "you only look once".</div>
+        <a class="demolink" href="index.html#detection">Demo · 14 Object detection</a>
+        <ul class="readings"><li><b>Redmon et al. (YOLO, 2016)</b>; Ultralytics YOLO docs; <b>Dive into Deep Learning</b>.</li></ul>
+      </div>
+
+      <div class="session" id="s27">
+        <div class="snum">SESSION 27 · LIVE IN-PERSON</div>
+        <h4>Generative models I</h4>
+        <p class="sobj">Objective: learn distributions over images (latent-variable &amp; autoregressive).</p>
+        <ul class="topics">
+          <li><b>Unsupervised learning</b> — finding structure without labels; autoencoders and PCA as the linear case.</li>
+          <li><b>Variational Autoencoders (VAE)</b> — an encoder to a latent distribution + decoder, trained with the ELBO (reconstruction − KL); sampling $z$ generates new images.</li>
+          <li><b>PixelRNN / PixelCNN</b> — autoregressive models factorising $p(x)=\prod_i p(x_i\mid x_{<i})$ pixel by pixel.</li>
+        </ul>
+        <div class="fmla">VAE: maximize ELBO = E_q[log p(x|z)] − KL( q(z|x) ‖ p(z) )</div>
+        <div class="keyidea"><b>Key idea:</b> a VAE makes the latent space <em>continuous and smooth</em>, so walking through $z$ morphs generated images — exactly what the latent-walk demo shows.</div>
+        <a class="demolink" href="index.html#autoencoder">Demo · 16 Autoencoder / PCA</a>
+        <a class="demolink" href="index.html#generative">Demo · 17 VAE latent walk</a>
+        <a class="demolink" href="index.html#ssl">Demo · 15 Self-supervised</a>
+        <ul class="readings"><li><b>Kingma &amp; Welling (VAE, 2014)</b>; <b>Bishop, Pattern Recognition and ML</b> — latent-variable models; <b>Dive into Deep Learning</b>.</li></ul>
+      </div>
+
+      <div class="session" id="s28">
+        <div class="snum">SESSION 28 · LIVE IN-PERSON</div>
+        <h4>Generative models II</h4>
+        <p class="sobj">Objective: contrast adversarial and diffusion generation.</p>
+        <ul class="topics">
+          <li><b>Generative Adversarial Networks (GANs)</b> — a generator vs discriminator min-max game producing sharp samples (with mode-collapse risk).</li>
+          <li><b>Diffusion models</b> — learning to reverse a gradual noising process; denoise from pure noise to a sample (the basis of modern image generators).</li>
+        </ul>
+        <div class="fmla">GAN: min_G max_D E[log D(x)] + E[log(1 − D(G(z)))] &nbsp;·&nbsp; Diffusion: x_t = √(ᾱ_t) x₀ + √(1−ᾱ_t) ε</div>
+        <div class="keyidea"><b>Key idea:</b> GANs learn generation <em>implicitly</em> through a critic; diffusion learns it by <em>reversing noise</em> step by step — more stable to train and now state of the art.</div>
+        <a class="demolink" href="index.html#generative">Demo · 17 GAN walk &amp; diffusion noising</a>
+        <ul class="readings"><li><b>Goodfellow et al. (GAN, 2014)</b>; <b>Ho et al. (DDPM, 2020)</b>; <b>Dive into Deep Learning</b> — GAN chapter.</li></ul>
+      </div>
+
+      <div class="session" id="s29">
+        <div class="snum">SESSION 29 · LIVE IN-PERSON</div>
+        <h4>Transformer architecture</h4>
+        <p class="sobj">Objective: understand attention and Vision Transformers.</p>
+        <ul class="topics">
+          <li><b>Self-attention &amp; transformers</b> — relating all positions via scaled dot-product attention; no recurrence or convolution required.</li>
+          <li><b>Vision Transformers (ViT)</b> — split the image into patches, embed them as tokens, and process with a transformer encoder.</li>
+          <li><b>Hybrid models</b> — combining CNN feature extractors with transformer reasoning (e.g. DETR).</li>
+          <li><b>Applications</b> — classification, detection and generation under one attention-based umbrella.</li>
+        </ul>
+        <div class="fmla">Attention(Q,K,V) = softmax( Q Kᵀ / √d_k ) V</div>
+        <div class="keyidea"><b>Key idea:</b> self-attention gives a <em>global</em> receptive field in one layer — every patch can attend to every other — which is what convolution achieves only by stacking depth.</div>
+        <a class="demolink" href="index.html#architectures">Demo · 12 Vision Transformer</a>
+        <ul class="readings"><li><b>Vaswani et al. (Attention Is All You Need, 2017)</b>; <b>Dosovitskiy et al. (ViT, 2021)</b>; <b>Dive into Deep Learning</b> — attention &amp; transformers.</li></ul>
+      </div>
+
+      <div class="session" id="s30">
+        <div class="snum">SESSION 30 · LIVE IN-PERSON</div>
+        <h4>Synthesis &amp; wrap-up</h4>
+        <p class="sobj">Objective: integrate the course — from image formation to transformers — and close the project work.</p>
+        <ul class="topics">
+          <li><b>End-to-end view</b> — tracing one pipeline from acquisition → processing → features → deep model → output, picking classical vs learned tools per stage.</li>
+          <li><b>Project consolidation &amp; outlook</b> — final-project guidance and the open frontiers (foundation/vision-language models, 3-D &amp; video, efficiency).</li>
+        </ul>
+        <div class="keyidea"><b>Key idea:</b> the field is one continuous story — geometry tells you <em>where</em>, processing tells you <em>what's there</em>, and learning tells you <em>what it means</em>; great systems combine all three.</div>
+        <a class="demolink" href="index.html#hero">Review · All 17 demos</a>
+        <a class="demolink" href="index.html#about">About the playground</a>
+        <ul class="readings"><li><b>Szeliski</b> — concluding chapters &amp; applications; revisit module readings for the final exam.</li></ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- GLOSSARY -->
+  <h2 class="sec" id="glossary">Key concepts — glossary</h2>
+  <p class="muted">Roughly 30 terms threaded through the course, in pipeline order. Each links conceptually to a session and, where relevant, a live demo.</p>
+  <dl class="glossary">
+    <div class="gterm"><dt>Homogeneous coordinates</dt><dd>Appending a scale coordinate so points are defined up to a non-zero factor; makes translation and perspective linear matrix operations. (S5)</dd></div>
+    <div class="gterm"><dt>Pinhole camera</dt><dd>Ideal projection $x=f X/Z,\,y=fY/Z$; the geometric core of every camera model. (S2, S7)</dd></div>
+    <div class="gterm"><dt>Intrinsics K</dt><dd>Focal lengths, principal point and skew — the camera's internal geometry estimated by calibration. (S7, S12–13)</dd></div>
+    <div class="gterm"><dt>Extrinsics [R|t]</dt><dd>The camera's rotation and translation in the world — its pose. (S7)</dd></div>
+    <div class="gterm"><dt>Homography</dt><dd>A 3×3 projective map between two images of a plane (or pure-rotation views); 8 DOF. (S6, S9–10, S20)</dd></div>
+    <div class="gterm"><dt>Epipolar geometry</dt><dd>The two-view constraint $x'^{\top}Fx=0$ that reduces correspondence search to a line. (S9–10)</dd></div>
+    <div class="gterm"><dt>Disparity</dt><dd>Horizontal shift of a point between rectified stereo views; inversely proportional to depth. (S8, S11)</dd></div>
+    <div class="gterm"><dt>Structure from motion</dt><dd>Recovering cameras and 3-D points from multiple views, refined by bundle adjustment. (S9–10)</dd></div>
+    <div class="gterm"><dt>Optical flow</dt><dd>Apparent per-pixel motion field, constrained by brightness constancy $I_xu+I_yv+I_t=0$. (S8)</dd></div>
+    <div class="gterm"><dt>Camera calibration</dt><dd>Estimating $K$ and lens distortion (Zhang's method), validated by reprojection error. (S12–13)</dd></div>
+    <div class="gterm"><dt>Reprojection error</dt><dd>RMS pixel distance between observed and reprojected points — the calibration quality metric. (S13)</dd></div>
+    <div class="gterm"><dt>Color space</dt><dd>A coordinate system for colour (RGB, HSV, Lab, YCbCr) chosen to separate the property of interest. (S3)</dd></div>
+    <div class="gterm"><dt>Histogram equalization</dt><dd>Remapping intensities by their CDF to maximise contrast. (S15, demo 5)</dd></div>
+    <div class="gterm"><dt>Convolution</dt><dd>Sliding weighted sum $(I*K)(x,y)=\sum I(x-i,y-j)K(i,j)$; the atom of filtering and CNNs. (S16, demo 6)</dd></div>
+    <div class="gterm"><dt>Separable filter</dt><dd>A 2-D kernel that factors into two 1-D passes, cutting cost from $O(k^2)$ to $O(2k)$. (S16)</dd></div>
+    <div class="gterm"><dt>Image gradient</dt><dd>$\nabla I=(I_x,I_y)$; magnitude marks edges, orientation their direction. (S8, S16, S18)</dd></div>
+    <div class="gterm"><dt>Edge detection</dt><dd>Locating intensity discontinuities (Sobel magnitude, Canny with NMS + hysteresis). (S16, S18–19, demo 8)</dd></div>
+    <div class="gterm"><dt>Fourier transform (2-D DFT)</dt><dd>Image as a sum of spatial frequencies; filtering = shaping the spectrum. (S17, demo 7)</dd></div>
+    <div class="gterm"><dt>Harris corner</dt><dd>Cornerness $R=\det(M)-k\,\mathrm{tr}(M)^2$ from the gradient second-moment matrix. (S18, demo 8)</dd></div>
+    <div class="gterm"><dt>Otsu thresholding</dt><dd>Automatic binarization maximising between-class variance. (S19, demo 13)</dd></div>
+    <div class="gterm"><dt>Morphology</dt><dd>Erode/dilate/open/close on binary images via a structuring element. (S15, demo 9)</dd></div>
+    <div class="gterm"><dt>NCC / template matching</dt><dd>Brightness-invariant patch correlation for locating templates. (S20, demo 14)</dd></div>
+    <div class="gterm"><dt>Pooling</dt><dd>Down-sampling (max/avg) that adds translation tolerance and shrinks feature maps. (S22, demo 11)</dd></div>
+    <div class="gterm"><dt>Receptive field</dt><dd>The input region influencing one activation; grows with depth, instant with attention. (S21–23, S29)</dd></div>
+    <div class="gterm"><dt>Residual connection</dt><dd>$y=F(x)+x$ shortcut that lets very deep networks train (ResNet). (S23, demo 12)</dd></div>
+    <div class="gterm"><dt>Encoder–decoder (U-Net)</dt><dd>Contracting + expanding paths with skip connections for dense (segmentation) output. (S23, S25, demo 12)</dd></div>
+    <div class="gterm"><dt>IoU &amp; NMS</dt><dd>Intersection-over-union overlap metric and non-max suppression to prune duplicate detections. (S25–26, demo 14)</dd></div>
+    <div class="gterm"><dt>Latent space</dt><dd>Low-dimensional code an autoencoder/VAE maps to; smooth in VAEs so interpolation is meaningful. (S27, demos 16–17)</dd></div>
+    <div class="gterm"><dt>GAN</dt><dd>Generator vs discriminator min-max game producing sharp samples. (S28, demo 17)</dd></div>
+    <div class="gterm"><dt>Diffusion model</dt><dd>Generation by learning to reverse a gradual noising process. (S28, demo 17)</dd></div>
+    <div class="gterm"><dt>Self-attention</dt><dd>$\mathrm{softmax}(QK^{\top}/\sqrt{d_k})V$ relating all positions; the basis of transformers/ViT. (S29, demo 12)</dd></div>
+    <div class="gterm"><dt>Vision Transformer (ViT)</dt><dd>Image as a sequence of patch tokens processed by a transformer encoder. (S29, demo 12)</dd></div>
+  </dl>
+
+  <!-- BIBLIOGRAPHY -->
+  <h2 class="sec" id="bibliography">Annotated bibliography</h2>
+  <p class="muted">Recommended texts from the official syllabus. Annotations indicate where each is most useful in this course.</p>
+  <ul class="biblio">
+    <li><span class="author">Hartley, R. I. &amp; Zisserman, A.</span> — <span class="title">Multiple View Geometry in Computer Vision</span>. <span class="isbn">ISBN 9780521540513 (Digital)</span><div class="anno">The definitive reference for the geometry module (S5–13): projective spaces, the camera matrix, homographies, epipolar geometry, F/E estimation and SfM.</div></li>
+    <li><span class="author">Forsyth, D. &amp; Ponce, J.</span> — <span class="title">Computer Vision: A Modern Approach</span>. <span class="isbn">ISBN 0130851981 (Digital)</span><div class="anno">Balanced classical text covering cameras, colour, filtering, segmentation and recognition — strong support for Modules 1, 4 and 5.</div></li>
+    <li><span class="author">Livingstone, M.</span> — <span class="title">Vision and Art: The Biology of Seeing</span>. <span class="isbn">ISBN 9780810904064 (Digital)</span><div class="anno">Accessible grounding in human vision, colour and luminance perception — motivation for the formation/colour material (S2–3).</div></li>
+    <li><span class="author">Szeliski, R.</span> — <span class="title">Computer Vision: Algorithms and Applications</span>. <span class="isbn">ISBN 9783030343743 (Printed)</span><div class="anno">The course's broadest backbone, spanning nearly every session from image formation through features, segmentation, recognition and deep learning.</div></li>
+    <li><span class="author">Bishop, C. M.</span> — <span class="title">Pattern Recognition and Machine Learning</span>. <span class="isbn">ISBN 9780387310732 (Printed)</span><div class="anno">Rigorous ML foundations — probability, latent-variable models and neural nets — underpinning Modules 6–7 (CNNs, VAEs, sequence models).</div></li>
+    <li><span class="author">Drummy, M. et al.</span> — <span class="title">Dive into Deep Learning: Tools for Engagement</span>. <span class="isbn">ISBN 9781544361376 (Printed)</span><div class="anno">Hands-on, framework-based deep-learning reference for the CNN, architecture, RNN, generative and transformer sessions (S21–30).</div></li>
+  </ul>
+
+  <footer class="coursefoot">
+    <p>AI: Computer Vision (AICV-CSAI.3.M.A) · BCSAI · IE University · 25–26 · Prof. Dr. Rubén Sánchez García.<br>
+    Companion study page generated from the official <a href="SYLLABUS.pdf" target="_blank" rel="noopener">syllabus</a>. Explanations and demo links are study aids — the syllabus PDF is authoritative.</p>
+    <p><a href="index.html">← Back to the interactive Computer Vision playground</a></p>
+  </footer>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.renderMathInElement) {
+    try {
+      window.renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false
+      });
+    } catch (e) { /* KaTeX optional — plain text fallback */ }
+  }
+});
+</script>
+</body>
+</html>
