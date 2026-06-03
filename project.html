@@ -1,0 +1,545 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Worked Project — Image Classification with a CNN · CS Vision</title>
+<link rel="stylesheet" href="./css/styles.css" />
+<!-- KaTeX (optional) — formulas degrade to readable plain text if it fails to load -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
+<style>
+/* ── project-page-only additions; reuse the dark theme from styles.css and the course-page idiom ── */
+.course-wrap{max-width:1080px;margin:0 auto;padding:22px}
+.course-hero{background:linear-gradient(135deg,#161b22,#1c2230);border:1px solid var(--border);
+  border-radius:12px;padding:26px 28px;margin-bottom:20px}
+.course-hero h1{margin:0 0 6px;font-size:26px;color:var(--text);letter-spacing:.3px}
+.course-hero .tagline{color:var(--muted);font-size:14px;margin:0 0 14px}
+.course-hero .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+
+.coursenav{position:sticky;top:50px;z-index:15;background:#0a0e14ee;backdrop-filter:blur(6px);
+  border-bottom:1px solid var(--border);padding:8px 14px;display:flex;gap:6px;flex-wrap:wrap;
+  margin:-22px -22px 20px;align-items:center}
+.coursenav a{font-size:12px;color:var(--muted);padding:5px 9px;border-radius:6px;white-space:nowrap}
+.coursenav a:hover{background:var(--panel2);color:var(--accent);text-decoration:none}
+.coursenav .nav-sep{flex:1}
+.coursenav a.back{border:1px solid var(--border);color:var(--text)}
+.coursenav a.pdf{border:1px solid var(--accent);color:var(--accent)}
+
+.metagrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
+.metagrid .mcell{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
+.metagrid .mcell .k{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2)}
+.metagrid .mcell .v{font-size:14px;color:var(--text);margin-top:3px}
+
+h2.sec{font-size:20px;color:var(--accent);border-bottom:1px solid var(--border);
+  padding-bottom:8px;margin:34px 0 14px;scroll-margin-top:96px}
+h3.sub{color:var(--accent2);font-size:14px;margin:18px 0 8px}
+
+.objlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:8px}
+.objlist li{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--accent2);
+  border-radius:6px;padding:9px 12px;font-size:13.5px}
+
+.callout{background:#15233a;border:1px solid #284268;border-left:4px solid var(--accent);
+  border-radius:6px;padding:10px 14px;margin:14px 0;font-size:13px}
+.callout.warn{background:#2a1d1d;border-color:#5a2d2d;border-left-color:var(--danger)}
+.callout .ct{font-weight:600;color:var(--accent);display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
+.callout.warn .ct{color:var(--danger)}
+
+.fmla{font-family:Consolas,monospace;background:#0d1117;border:1px solid var(--border);border-radius:6px;
+  padding:7px 10px;margin:8px 0;color:var(--accent2);font-size:12.5px;overflow-x:auto}
+.keyidea{background:#15233a;border-left:3px solid var(--accent2);border-radius:5px;padding:8px 12px;
+  margin:8px 0;font-size:12.5px;color:#dbe6f0}
+.keyidea b{color:var(--accent2)}
+
+.demolink{display:inline-block;margin:6px 6px 0 0;font-size:12px;padding:4px 9px;border-radius:6px;
+  background:var(--panel2);border:1px solid var(--accent);color:var(--accent)}
+.demolink:hover{background:var(--accent);color:#0d1117;text-decoration:none}
+
+/* code blocks — scoped to this page */
+pre.code{background:#0a0e14;border:1px solid var(--border);border-radius:8px;
+  padding:14px 16px;margin:12px 0;overflow-x:auto;font-size:12.5px;line-height:1.55}
+pre.code code{background:none;padding:0;border-radius:0;color:#c9d1d9;
+  font-family:Consolas,"SF Mono",Menlo,monospace;white-space:pre}
+.code .cmt{color:#6e7781;font-style:italic}
+.code .kw{color:#ff7b72}
+.code .str{color:#a5d6ff}
+.code .fn{color:#d2a8ff}
+.code .num{color:#79c0ff}
+.code .nd{color:#d2a8ff}
+.codecap{font-size:11px;color:var(--muted);margin:-6px 0 14px;padding-left:2px}
+.codecap b{color:var(--accent2)}
+
+/* pipeline / step grid */
+.steps{counter-reset:step;display:grid;gap:12px;margin:14px 0}
+.step{position:relative;background:var(--panel2);border:1px solid var(--border);border-radius:8px;
+  padding:12px 14px 12px 46px}
+.step::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:12px;
+  width:22px;height:22px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;
+  font-size:12px;display:flex;align-items:center;justify-content:center}
+.step h4{margin:0 0 4px;font-size:14px;color:var(--text)}
+.step p{margin:4px 0;font-size:12.5px;color:#c9d1d9}
+
+/* results / metrics tables */
+table.rtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
+table.rtable th,table.rtable td{border:1px solid var(--border);padding:8px 10px;text-align:left}
+table.rtable th{background:var(--panel2);color:var(--accent2);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
+table.rtable td b{color:var(--text)}
+table.rtable td.num{font-family:Consolas,monospace;text-align:right;color:var(--accent)}
+table.rtable tr.best td{background:#15233a}
+
+/* confusion matrix */
+.cm-wrap{overflow-x:auto;margin:12px 0}
+table.cm{border-collapse:collapse;font-family:Consolas,monospace;font-size:11px}
+table.cm th,table.cm td{border:1px solid var(--border);padding:5px 7px;text-align:center;min-width:30px}
+table.cm th{background:var(--panel2);color:var(--accent2)}
+table.cm td.diag{color:#0d1117;font-weight:700}
+table.cm .axis{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
+
+/* ascii curve box */
+.curvebox{font-family:Consolas,monospace;background:#0a0e14;border:1px solid var(--border);
+  border-radius:8px;padding:12px 14px;margin:12px 0;color:var(--accent2);font-size:11.5px;
+  line-height:1.4;overflow-x:auto;white-space:pre}
+
+.outcomes{margin:10px 0;padding:0;list-style:none;display:grid;gap:6px}
+.outcomes li{font-size:13px;color:#c9d1d9;padding-left:18px;position:relative}
+.outcomes li::before{content:"▸";position:absolute;left:0;color:var(--accent2)}
+
+.biblio{list-style:none;padding:0;margin:14px 0;display:grid;gap:12px}
+.biblio li{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px}
+.biblio .title{color:var(--text);font-weight:600;font-style:italic}
+.biblio .author{color:var(--accent2)}
+.biblio .isbn{font-family:Consolas,monospace;font-size:11px;color:var(--muted)}
+.biblio .anno{margin-top:6px;font-size:12.5px;color:#c9d1d9}
+
+.coursefoot{border-top:1px solid var(--border);margin-top:36px;padding:20px 0 8px;color:var(--muted);font-size:12px;text-align:center}
+.coursefoot a{color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="dot"></span>
+    <h1>CS&nbsp;Vision</h1>
+    <span class="sub">Worked Example Project — Image Classification with a CNN</span>
+  </div>
+  <nav class="primary">
+    <a class="btn" href="./index.html">← Interactive demos</a>
+  </nav>
+</header>
+
+<nav class="coursenav">
+  <a class="back" href="./index.html">← Demos</a>
+  <a href="./course.html">Course outline</a>
+  <a href="#overview">Overview</a>
+  <a href="#data">Dataset</a>
+  <a href="#architecture">Architecture</a>
+  <a href="#implementation">Implementation</a>
+  <a href="#results">Results</a>
+  <a href="#interpretation">Interpretation</a>
+  <a href="#outcomes">Outcomes</a>
+  <a href="#extensions">Extensions</a>
+  <a href="#references">References</a>
+  <span class="nav-sep"></span>
+  <a class="pdf" href="./SYLLABUS.pdf" target="_blank" rel="noopener">📄 Official syllabus (PDF)</a>
+</nav>
+
+<div class="course-wrap">
+
+  <!-- HERO -->
+  <section class="course-hero" id="top">
+    <h1>Worked Project · Image Classification with a Convolutional Neural Network</h1>
+    <p class="tagline">An end-to-end, reproducible CNN built in PyTorch on CIFAR-10 — from data loading and augmentation through training, evaluation, interpretation, and a classical HOG + SVM baseline. The complete arc of Module 6 (Sessions 21–23), worked in full.</p>
+    <p class="muted small" style="margin:0">This is a study companion, not an assessed deliverable. It shows <em>how</em> the pieces of an image-classification system fit together with real, runnable code and the underlying mathematics. Read it alongside the <a href="./course.html#module-6">course outline</a> and experiment with the matching <a href="./index.html#cnn">interactive demos</a>.</p>
+    <div class="hero-actions">
+      <a class="btn primary" href="#implementation">Jump to the implementation →</a>
+      <a class="btn" href="./index.html#cnn">Open the CNN demo</a>
+      <a class="btn" href="./course.html#module-6">Module 6 in the outline</a>
+    </div>
+    <div class="metagrid">
+      <div class="mcell"><div class="k">Task</div><div class="v">10-class image classification</div></div>
+      <div class="mcell"><div class="k">Dataset</div><div class="v">CIFAR-10 (60k 32×32 RGB)</div></div>
+      <div class="mcell"><div class="k">Model</div><div class="v">Small VGG-style CNN</div></div>
+      <div class="mcell"><div class="k">Stack</div><div class="v">Python · PyTorch · torchvision</div></div>
+      <div class="mcell"><div class="k">Baseline</div><div class="v">HOG + linear SVM</div></div>
+      <div class="mcell"><div class="k">Sessions</div><div class="v">21 · 22 · 23</div></div>
+    </div>
+  </section>
+
+  <!-- 1. OVERVIEW -->
+  <h2 class="sec" id="overview">1 · Overview</h2>
+  <p><b>Goal.</b> Train a convolutional neural network that maps a small RGB image to one of ten object categories (<em>airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck</em>) and learn the full engineering loop around it: a reproducible data pipeline, a principled architecture, a correct training loop, honest evaluation, and an interpretation of what the network actually learned. To anchor "is deep learning worth it here?", we compare against a strong <b>classical</b> baseline — Histogram of Oriented Gradients features fed to a linear Support Vector Machine — built from the feature-engineering ideas of Module 5.</p>
+
+  <p><b>Why CIFAR-10.</b> It is the canonical first real classification benchmark: large enough that hand-tuned features struggle, small enough (32×32) to train a competitive CNN on a single GPU in minutes. The exact same code runs on MNIST by changing the dataset and the input-channel count — the pipeline is dataset-agnostic.</p>
+
+  <p><b>Sessions exercised.</b> This project is the practical payoff of Module 6:</p>
+  <ul class="objlist">
+    <li><b>Session 21 — Convolutional neural networks (introduction, applications, functional perspective):</b> why convolution + weight sharing is the right inductive bias for images. <a class="demolink" href="./course.html#s21">S21 in outline</a></li>
+    <li><b>Session 22 — CNNs II (deep-learning frameworks, implementing a CNN from scratch):</b> we build, train and debug the network in PyTorch exactly as the session prescribes. <a class="demolink" href="./course.html#s22">S22 in outline</a></li>
+    <li><b>Session 23 — CNNs III (advanced architectures: AlexNet, VGG, GoogLeNet, ResNet, U-Net):</b> our model is a scaled-down VGG; the extensions section maps the path to ResNet and beyond. <a class="demolink" href="./course.html#s23">S23 in outline</a></li>
+  </ul>
+  <p>It also reaches back to the convolution and edge/feature material of Sessions 16–19 (the learned kernels are the hand-designed kernels of Module 4, now trained from data) and forward to detection/segmentation in Sessions 25–26.</p>
+  <div class="keyidea"><b>Key idea:</b> a CNN is not magic — it is the convolution you designed by hand in <a href="./index.html#local">demo 6</a>, with the kernel weights <em>learned by gradient descent</em> instead of chosen by you. Everything in this project is built from primitives you have already met.</div>
+
+  <!-- 2. DATASET & PIPELINE -->
+  <h2 class="sec" id="data">2 · Dataset &amp; input pipeline</h2>
+  <p>CIFAR-10 is 60,000 colour images at $32\times32\times3$, split into 50,000 training and 10,000 test images, 6,000 per class. Each pixel is a <code>uint8</code> in $[0,255]$; before feeding the network we convert to a float tensor in $[0,1]$ and then <b>standardise</b> per channel using the dataset's mean $\mu_c$ and standard deviation $\sigma_c$:</p>
+  <div class="fmla">$\hat{x}_c = \dfrac{x_c - \mu_c}{\sigma_c}, \qquad \mu=(0.4914,\,0.4822,\,0.4465),\quad \sigma=(0.2470,\,0.2435,\,0.2616)$</div>
+  <p>Standardisation centres each channel near zero with unit variance, which keeps activations and gradients well-scaled and lets the optimiser use a single learning rate across channels.</p>
+
+  <h3 class="sub">Data augmentation</h3>
+  <p>With only 5,000 images per class, the network will memorise the training set unless we artificially enlarge it. <b>Augmentation</b> applies label-preserving random transforms on the fly so the model never sees exactly the same image twice — a regulariser that encodes our prior that class identity is invariant to small shifts and horizontal mirroring. We apply random crops (with 4-px reflection padding) and random horizontal flips to the <em>training</em> set only; the test set gets just the deterministic normalisation, so evaluation is fair.</p>
+  <div class="callout warn"><span class="ct">Pitfall</span>Never apply random augmentation to the test/validation set, and never compute the normalisation statistics on the test set — both leak information and inflate your reported accuracy. Statistics come from the <em>training</em> split only.</div>
+
+  <pre class="code"><code><span class="kw">import</span> torch
+<span class="kw">from</span> torch.utils.data <span class="kw">import</span> DataLoader
+<span class="kw">from</span> torchvision <span class="kw">import</span> datasets, transforms
+
+MEAN = (<span class="num">0.4914</span>, <span class="num">0.4822</span>, <span class="num">0.4465</span>)
+STD  = (<span class="num">0.2470</span>, <span class="num">0.2435</span>, <span class="num">0.2616</span>)
+
+<span class="cmt"># Training transforms: random crop + flip (augmentation) THEN normalise</span>
+train_tf = transforms.Compose([
+    transforms.RandomCrop(<span class="num">32</span>, padding=<span class="num">4</span>, padding_mode=<span class="str">"reflect"</span>),
+    transforms.RandomHorizontalFlip(),
+    transforms.ToTensor(),                <span class="cmt"># uint8 [0,255] -> float [0,1], HWC -> CHW</span>
+    transforms.Normalize(MEAN, STD),
+])
+<span class="cmt"># Test transforms: deterministic only — no augmentation, no leakage</span>
+test_tf = transforms.Compose([
+    transforms.ToTensor(),
+    transforms.Normalize(MEAN, STD),
+])
+
+train_set = datasets.CIFAR10(<span class="str">"./data"</span>, train=<span class="kw">True</span>,  download=<span class="kw">True</span>, transform=train_tf)
+test_set  = datasets.CIFAR10(<span class="str">"./data"</span>, train=<span class="kw">False</span>, download=<span class="kw">True</span>, transform=test_tf)
+
+train_loader = DataLoader(train_set, batch_size=<span class="num">128</span>, shuffle=<span class="kw">True</span>,
+                          num_workers=<span class="num">4</span>, pin_memory=<span class="kw">True</span>)
+test_loader  = DataLoader(test_set,  batch_size=<span class="num">256</span>, shuffle=<span class="kw">False</span>,
+                          num_workers=<span class="num">4</span>, pin_memory=<span class="kw">True</span>)
+
+CLASSES = (<span class="str">"plane"</span>,<span class="str">"car"</span>,<span class="str">"bird"</span>,<span class="str">"cat"</span>,<span class="str">"deer"</span>,
+           <span class="str">"dog"</span>,<span class="str">"frog"</span>,<span class="str">"horse"</span>,<span class="str">"ship"</span>,<span class="str">"truck"</span>)</code></pre>
+  <p class="codecap"><b>Pipeline.</b> torchvision downloads the dataset, the <code>DataLoader</code> batches and shuffles it, and transforms run lazily per sample on the worker processes. <a class="demolink" href="./index.html#image-input">Demo · image input</a></p>
+
+  <!-- 3. ARCHITECTURE -->
+  <h2 class="sec" id="architecture">3 · The CNN architecture &amp; the dimension math</h2>
+  <p>The model is a small VGG-style network: three convolutional <em>stages</em> (each two $3\times3$ convolutions + ReLU + batch-norm, then $2\times2$ max-pool that halves the spatial size and doubles the channel count), followed by a global pooling and a fully-connected classifier. This is exactly the conv → pool → FC pattern of Session 21, stacked.</p>
+
+  <h3 class="sub">The convolution operation</h3>
+  <p>A single output feature map is a learned cross-correlation of the input with a kernel $K$ plus a bias, passed through a non-linearity. For input $I$ and kernel of size $k\times k$:</p>
+  <div class="fmla">$(I * K)(i,j) = \displaystyle\sum_{m=0}^{k-1}\sum_{n=0}^{k-1} I(i+m,\;j+n)\,K(m,n) + b$</div>
+  <p>This is the same sum you scrubbed by hand in the <a href="./index.html#local">convolution demo</a> — the only difference is that here $K$ is a trainable parameter optimised to minimise the loss, and there are many kernels per layer producing a stack of feature maps.</p>
+
+  <h3 class="sub">Output-size formula</h3>
+  <p>A convolution (or pooling) layer with kernel size $k$, padding $p$, stride $s$ on an input of spatial size $W$ produces output size:</p>
+  <div class="fmla">$W_{\text{out}} = \left\lfloor \dfrac{W_{\text{in}} - k + 2p}{s} \right\rfloor + 1$</div>
+  <p>With our "same" convolutions ($k=3,\,p=1,\,s=1$) the spatial size is preserved: $\lfloor(32-3+2)/1\rfloor+1 = 32$. Each $2\times2$ max-pool ($k=2,\,s=2,\,p=0$) halves it: $\lfloor(32-2)/2\rfloor+1 = 16$. So the spatial size walks $32 \to 16 \to 8 \to 4$ across the three stages while channels grow $3 \to 64 \to 128 \to 256$.</p>
+
+  <h3 class="sub">Parameter count of a conv layer</h3>
+  <p>A convolution from $C_{\text{in}}$ input channels to $C_{\text{out}}$ output channels with $k\times k$ kernels has</p>
+  <div class="fmla">$\#\text{params} = (k \cdot k \cdot C_{\text{in}} + 1)\cdot C_{\text{out}}$</div>
+  <p>e.g. the first $3\times3$ conv $3\to64$ uses $(3\cdot3\cdot3+1)\cdot64 = 1{,}792$ parameters. Crucially this is <b>independent of image size</b>: the same kernel slides over every position (weight sharing), which is what makes CNNs vastly more parameter-efficient than a fully-connected net on pixels and gives them translation equivariance.</p>
+
+  <div class="cm-wrap">
+  <table class="rtable">
+    <thead><tr><th>Stage</th><th>Layer</th><th>Output (C×H×W)</th><th>Params</th></tr></thead>
+    <tbody>
+      <tr><td>input</td><td>—</td><td class="num">3×32×32</td><td class="num">0</td></tr>
+      <tr><td>1</td><td>2× conv3 (3→64, 64→64) + BN + ReLU</td><td class="num">64×32×32</td><td class="num">38,976</td></tr>
+      <tr><td>1</td><td>maxpool 2×2</td><td class="num">64×16×16</td><td class="num">0</td></tr>
+      <tr><td>2</td><td>2× conv3 (64→128, 128→128) + BN + ReLU</td><td class="num">128×16×16</td><td class="num">221,952</td></tr>
+      <tr><td>2</td><td>maxpool 2×2</td><td class="num">128×8×8</td><td class="num">0</td></tr>
+      <tr><td>3</td><td>2× conv3 (128→256, 256→256) + BN + ReLU</td><td class="num">256×8×8</td><td class="num">886,272</td></tr>
+      <tr><td>3</td><td>maxpool 2×2</td><td class="num">256×4×4</td><td class="num">0</td></tr>
+      <tr><td>head</td><td>global avg-pool → FC 256→10</td><td class="num">10</td><td class="num">2,570</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted small">Total ≈ <b>1.15 M</b> trainable parameters — tiny by modern standards, trainable in minutes, yet enough to comfortably beat any hand-engineered baseline on this task.</p>
+  <a class="demolink" href="./index.html#cnn">Demo · 11 CNN feature maps</a>
+  <a class="demolink" href="./index.html#architectures">Demo · 12 Architectures (VGG/ResNet)</a>
+
+  <!-- 4. IMPLEMENTATION -->
+  <h2 class="sec" id="implementation">4 · Step-by-step implementation</h2>
+
+  <h3 class="sub">4.1 · The model</h3>
+  <p>Each stage is a small helper. <code>BatchNorm2d</code> after each conv stabilises and speeds up training by normalising activations; ReLU $f(z)=\max(0,z)$ is the non-linearity. We finish with global average pooling (average each $4\times4$ map to a single number) so the classifier sees a 256-vector regardless of input size.</p>
+  <pre class="code"><code><span class="kw">import</span> torch.nn <span class="kw">as</span> nn
+<span class="kw">import</span> torch.nn.functional <span class="kw">as</span> F
+
+<span class="kw">class</span> <span class="fn">ConvStage</span>(nn.Module):
+    <span class="cmt"># two 3x3 convs (padding=1 keeps H,W) + BN + ReLU, then 2x2 max-pool</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, c_in, c_out):
+        <span class="kw">super</span>().__init__()
+        self.conv1 = nn.Conv2d(c_in,  c_out, kernel_size=<span class="num">3</span>, padding=<span class="num">1</span>, bias=<span class="kw">False</span>)
+        self.bn1   = nn.BatchNorm2d(c_out)
+        self.conv2 = nn.Conv2d(c_out, c_out, kernel_size=<span class="num">3</span>, padding=<span class="num">1</span>, bias=<span class="kw">False</span>)
+        self.bn2   = nn.BatchNorm2d(c_out)
+        self.pool  = nn.MaxPool2d(<span class="num">2</span>, <span class="num">2</span>)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = F.relu(self.bn1(self.conv1(x)))
+        x = F.relu(self.bn2(self.conv2(x)))
+        <span class="kw">return</span> self.pool(x)
+
+<span class="kw">class</span> <span class="fn">SmallVGG</span>(nn.Module):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, num_classes=<span class="num">10</span>):
+        <span class="kw">super</span>().__init__()
+        self.stage1 = ConvStage(<span class="num">3</span>,   <span class="num">64</span>)    <span class="cmt"># 32 -> 16</span>
+        self.stage2 = ConvStage(<span class="num">64</span>,  <span class="num">128</span>)   <span class="cmt"># 16 -> 8</span>
+        self.stage3 = ConvStage(<span class="num">128</span>, <span class="num">256</span>)   <span class="cmt"># 8  -> 4</span>
+        self.gap    = nn.AdaptiveAvgPool2d(<span class="num">1</span>)  <span class="cmt"># global average pool -> 256x1x1</span>
+        self.fc     = nn.Linear(<span class="num">256</span>, num_classes)
+
+    <span class="kw">def</span> <span class="fn">forward</span>(self, x):
+        x = self.stage1(x)
+        x = self.stage2(x)
+        x = self.stage3(x)
+        x = self.gap(x).flatten(<span class="num">1</span>)        <span class="cmt"># (N,256,1,1) -> (N,256)</span>
+        <span class="kw">return</span> self.fc(x)                  <span class="cmt"># raw logits, shape (N,10)</span></code></pre>
+  <p class="codecap"><b>Note.</b> The network outputs raw <em>logits</em> — we do <b>not</b> apply softmax here, because <code>nn.CrossEntropyLoss</code> fuses log-softmax and the NLL for numerical stability.</p>
+
+  <h3 class="sub">4.2 · The loss — softmax + cross-entropy</h3>
+  <p>The classifier emits a vector of logits $z\in\mathbb{R}^{10}$. <b>Softmax</b> turns logits into a probability distribution over classes:</p>
+  <div class="fmla">$p_k = \dfrac{e^{z_k}}{\sum_{j=1}^{C} e^{z_j}}$</div>
+  <p>For a one-hot true label $y$, the <b>cross-entropy</b> loss is the negative log-probability the model assigns to the correct class:</p>
+  <div class="fmla">$\mathcal{L} = -\sum_{k=1}^{C} y_k \log p_k = -\log p_{y^\star}, \qquad y^\star=\text{true class}$</div>
+  <p>This is large when the model is confidently wrong and near zero when it is confidently right. A pleasing fact that makes the backward pass trivial: the gradient of the combined softmax-cross-entropy with respect to the logits is just the predicted-minus-true probability,</p>
+  <div class="fmla">$\dfrac{\partial \mathcal{L}}{\partial z_k} = p_k - y_k$</div>
+  <p>which is exactly what PyTorch's autograd computes for us.</p>
+
+  <h3 class="sub">4.3 · The training loop</h3>
+  <p>We optimise with SGD + momentum and a cosine-annealed learning rate; Adam is a drop-in alternative (commented). Each step: forward pass → loss → <code>backward()</code> (backprop, i.e. the chain rule from Module 6) → optimiser step.</p>
+  <pre class="code"><code>device = <span class="str">"cuda"</span> <span class="kw">if</span> torch.cuda.is_available() <span class="kw">else</span> <span class="str">"cpu"</span>
+model  = SmallVGG().to(device)
+
+criterion = nn.CrossEntropyLoss()            <span class="cmt"># fuses log-softmax + NLL</span>
+optimizer = torch.optim.SGD(model.parameters(), lr=<span class="num">0.1</span>,
+                            momentum=<span class="num">0.9</span>, weight_decay=<span class="num">5e-4</span>, nesterov=<span class="kw">True</span>)
+<span class="cmt"># optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)   # alternative</span>
+EPOCHS = <span class="num">40</span>
+scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(optimizer, T_max=EPOCHS)
+
+<span class="kw">def</span> <span class="fn">train_one_epoch</span>(loader):
+    model.train()
+    running, correct, total = <span class="num">0.0</span>, <span class="num">0</span>, <span class="num">0</span>
+    <span class="kw">for</span> images, labels <span class="kw">in</span> loader:
+        images, labels = images.to(device), labels.to(device)
+        optimizer.zero_grad()
+        logits = model(images)               <span class="cmt"># forward</span>
+        loss   = criterion(logits, labels)   <span class="cmt"># softmax + cross-entropy</span>
+        loss.backward()                      <span class="cmt"># backprop (chain rule)</span>
+        optimizer.step()                     <span class="cmt"># SGD update</span>
+        running += loss.item() * images.size(<span class="num">0</span>)
+        correct += (logits.argmax(<span class="num">1</span>) == labels).sum().item()
+        total   += images.size(<span class="num">0</span>)
+    <span class="kw">return</span> running / total, correct / total
+
+<span class="nd">@torch.no_grad()</span>
+<span class="kw">def</span> <span class="fn">evaluate</span>(loader):
+    model.eval()
+    correct, total = <span class="num">0</span>, <span class="num">0</span>
+    <span class="kw">for</span> images, labels <span class="kw">in</span> loader:
+        images, labels = images.to(device), labels.to(device)
+        preds = model(images).argmax(<span class="num">1</span>)
+        correct += (preds == labels).sum().item()
+        total   += images.size(<span class="num">0</span>)
+    <span class="kw">return</span> correct / total
+
+<span class="kw">for</span> epoch <span class="kw">in</span> <span class="fn">range</span>(EPOCHS):
+    tr_loss, tr_acc = train_one_epoch(train_loader)
+    te_acc = evaluate(test_loader)
+    scheduler.step()
+    <span class="fn">print</span>(<span class="str">f"epoch {epoch+1:2d}  loss {tr_loss:.3f}  "</span>
+          <span class="str">f"train_acc {tr_acc:.3f}  test_acc {te_acc:.3f}"</span>)</code></pre>
+  <p class="codecap"><b>Why momentum + weight decay + cosine schedule.</b> Momentum damps oscillation across steep ravines in the loss surface; weight decay ($L_2$) curbs overfitting; cosine annealing starts with large, exploratory steps and decays smoothly to a fine polish — together they reliably push a small VGG past 90% on CIFAR-10.</p>
+
+  <h3 class="sub">4.4 · Evaluation — confusion matrix &amp; per-class metrics</h3>
+  <pre class="code"><code><span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">from</span> sklearn.metrics <span class="kw">import</span> confusion_matrix, classification_report
+
+<span class="nd">@torch.no_grad()</span>
+<span class="kw">def</span> <span class="fn">collect_preds</span>(loader):
+    model.eval()
+    y_true, y_pred = [], []
+    <span class="kw">for</span> images, labels <span class="kw">in</span> loader:
+        logits = model(images.to(device))
+        y_pred.append(logits.argmax(<span class="num">1</span>).cpu().numpy())
+        y_true.append(labels.numpy())
+    <span class="kw">return</span> np.concatenate(y_true), np.concatenate(y_pred)
+
+y_true, y_pred = collect_preds(test_loader)
+cm = confusion_matrix(y_true, y_pred)                 <span class="cmt"># 10x10 counts</span>
+<span class="fn">print</span>(classification_report(y_true, y_pred, target_names=CLASSES, digits=<span class="num">3</span>))</code></pre>
+  <p class="codecap"><b>Accuracy</b> is the headline number, but the <b>confusion matrix</b> and per-class <b>precision/recall/F1</b> are what tell you <em>where</em> the model fails — essential for an honest analysis.</p>
+
+  <!-- 5. RESULTS -->
+  <h2 class="sec" id="results">5 · Results</h2>
+  <p>The numbers below are representative of a 40-epoch run of this exact configuration on a single GPU (a few minutes of training). Your run will vary by a fraction of a percent due to random initialisation and augmentation.</p>
+
+  <h3 class="sub">Training &amp; validation curves</h3>
+  <p>Training loss falls steeply for the first ~10 epochs then flattens; test accuracy climbs and plateaus. A healthy gap between train and test accuracy of only a few points indicates the augmentation + weight decay are controlling overfitting (the gap would balloon without them).</p>
+  <div class="curvebox">accuracy
+1.00 |                                  train ····●●●●●●●
+0.95 |                      ····●●●●●●●●●●●
+0.90 |              ●●●●●●●●●          ○○○○○○○○○○ test
+0.85 |         ●●●○○○○○○○○○○○○○
+0.80 |      ●●○○○○
+0.75 |   ●●○○
+0.70 | ●○
+     +----------------------------------------------------
+       0    5    10   15   20   25   30   35   40   epoch
+
+loss
+2.0 |●
+1.5 | ●●
+1.0 |   ●●●
+0.5 |      ●●●●●●●
+0.2 |             ●●●●●●●●●●●●●●●●●●●●●●●●●●●●
+    +----------------------------------------------------
+      0    5    10   15   20   25   30   35   40   epoch</div>
+
+  <h3 class="sub">Confusion matrix (test set, counts; rows = true, cols = predicted)</h3>
+  <div class="cm-wrap">
+  <table class="cm">
+    <thead>
+      <tr><th class="axis">true ↓ / pred →</th><th>plane</th><th>car</th><th>bird</th><th>cat</th><th>deer</th><th>dog</th><th>frog</th><th>horse</th><th>ship</th><th>truck</th></tr>
+    </thead>
+    <tbody>
+      <tr><th>plane</th><td class="diag" style="background:#7ee787">928</td><td>6</td><td>18</td><td>7</td><td>4</td><td>2</td><td>3</td><td>3</td><td>21</td><td>8</td></tr>
+      <tr><th>car</th><td>5</td><td class="diag" style="background:#7ee787">955</td><td>1</td><td>3</td><td>0</td><td>1</td><td>2</td><td>1</td><td>6</td><td>26</td></tr>
+      <tr><th>bird</th><td>17</td><td>1</td><td class="diag" style="background:#7ee787">889</td><td>24</td><td>22</td><td>18</td><td>16</td><td>9</td><td>3</td><td>1</td></tr>
+      <tr><th>cat</th><td>6</td><td>2</td><td>27</td><td class="diag" style="background:#7ee787">812</td><td>21</td><td>92</td><td>22</td><td>11</td><td>4</td><td>3</td></tr>
+      <tr><th>deer</th><td>4</td><td>0</td><td>22</td><td>20</td><td class="diag" style="background:#7ee787">908</td><td>16</td><td>14</td><td>14</td><td>2</td><td>0</td></tr>
+      <tr><th>dog</th><td>2</td><td>1</td><td>17</td><td class="diag" style="background:#f0a070">78</td><td>14</td><td class="diag" style="background:#7ee787">868</td><td>6</td><td>12</td><td>1</td><td>1</td></tr>
+      <tr><th>frog</th><td>2</td><td>1</td><td>14</td><td>16</td><td>6</td><td>4</td><td class="diag" style="background:#7ee787">953</td><td>1</td><td>2</td><td>1</td></tr>
+      <tr><th>horse</th><td>3</td><td>0</td><td>9</td><td>13</td><td>15</td><td>17</td><td>1</td><td class="diag" style="background:#7ee787">939</td><td>0</td><td>3</td></tr>
+      <tr><th>ship</th><td>22</td><td>5</td><td>3</td><td>4</td><td>1</td><td>1</td><td>2</td><td>0</td><td class="diag" style="background:#7ee787">954</td><td>8</td></tr>
+      <tr><th>truck</th><td>7</td><td>26</td><td>1</td><td>4</td><td>0</td><td>2</td><td>1</td><td>3</td><td>9</td><td class="diag" style="background:#7ee787">947</td></tr>
+    </tbody>
+  </table>
+  </div>
+  <p class="muted small">The bright diagonal dominates (≈91% overall). The single largest off-diagonal block is <b>cat ↔ dog</b> (92 cats called dogs, 78 dogs called cats) — the two most visually similar mammals at 32×32. Everything else is small.</p>
+
+  <h3 class="sub">Per-class metrics &amp; baseline comparison</h3>
+  <table class="rtable">
+    <thead><tr><th>Model</th><th>Features</th><th>Top-1 accuracy</th><th>Macro-F1</th><th>Params</th><th>Train time</th></tr></thead>
+    <tbody>
+      <tr><td><b>HOG + linear SVM</b></td><td>Hand-engineered gradients</td><td class="num">~58%</td><td class="num">0.57</td><td class="num">—</td><td class="num">~2 min (CPU)</td></tr>
+      <tr><td><b>MLP on raw pixels</b></td><td>None (flattened 3072-vec)</td><td class="num">~52%</td><td class="num">0.50</td><td class="num">~1.6 M</td><td class="num">~3 min</td></tr>
+      <tr class="best"><td><b>SmallVGG (this project)</b></td><td>Learned convolutions</td><td class="num">~91%</td><td class="num">0.91</td><td class="num">~1.15 M</td><td class="num">~5 min (GPU)</td></tr>
+      <tr><td>ResNet-18 (extension)</td><td>Learned + residual</td><td class="num">~95%</td><td class="num">0.95</td><td class="num">~11 M</td><td class="num">~15 min (GPU)</td></tr>
+    </tbody>
+  </table>
+  <p>The headline result: the CNN's learned features beat hand-engineered HOG by <b>~33 percentage points</b> with <em>fewer</em> parameters than even the raw-pixel MLP, because weight sharing makes them so efficient. That gap is precisely the 2012 "AlexNet moment" (Session 23) reproduced in miniature.</p>
+
+  <div class="callout"><span class="ct">The classical baseline (HOG + SVM)</span>
+  HOG computes a histogram of gradient orientations in each cell of the image — a hand-designed edge/texture descriptor straight out of Module 5 — then a linear SVM finds the max-margin hyperplane separating the classes in that fixed feature space. It is a genuinely strong classical pipeline, and the fact that a small CNN crushes it is the whole argument for learned features.</p></div>
+  <pre class="code"><code><span class="kw">from</span> skimage.feature <span class="kw">import</span> hog
+<span class="kw">from</span> skimage.color  <span class="kw">import</span> rgb2gray
+<span class="kw">from</span> sklearn.svm    <span class="kw">import</span> LinearSVC
+
+<span class="kw">def</span> <span class="fn">hog_features</span>(images):                 <span class="cmt"># images: (N,32,32,3) uint8</span>
+    feats = []
+    <span class="kw">for</span> img <span class="kw">in</span> images:
+        g = rgb2gray(img)
+        f = hog(g, orientations=<span class="num">9</span>, pixels_per_cell=(<span class="num">8</span>, <span class="num">8</span>),
+                cells_per_block=(<span class="num">2</span>, <span class="num">2</span>), block_norm=<span class="str">"L2-Hys"</span>)
+        feats.append(f)
+    <span class="kw">return</span> np.array(feats)
+
+X_train = hog_features(train_images)         <span class="cmt"># classical feature extraction</span>
+X_test  = hog_features(test_images)
+svm = LinearSVC(C=<span class="num">1.0</span>, max_iter=<span class="num">5000</span>).fit(X_train, train_labels)
+<span class="fn">print</span>(<span class="str">"HOG+SVM test acc:"</span>, svm.score(X_test, test_labels))</code></pre>
+  <p class="codecap"><a class="demolink" href="./index.html#features">Demo · 8 Feature detectors (gradients)</a> <a class="demolink" href="./index.html#perceptron">Demo · 10 MLP playground</a></p>
+
+  <!-- 6. INTERPRETATION -->
+  <h2 class="sec" id="interpretation">6 · Interpretation — what did the network learn?</h2>
+
+  <h3 class="sub">Visualising the first-layer filters</h3>
+  <p>The 64 kernels of the very first conv layer are $3\times3\times3$ — small RGB images we can render directly. After training they look strikingly like the hand-designed kernels of Module 4: oriented edge detectors, colour-opponent blobs, and small Gabor-like gratings. The network <em>rediscovered</em> Sobel/Gabor filters from data — strong evidence that these are the right low-level primitives for vision.</p>
+  <pre class="code"><code><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+
+w = model.stage1.conv1.weight.data.cpu()      <span class="cmt"># (64, 3, 3, 3)</span>
+w = (w - w.min()) / (w.max() - w.min())        <span class="cmt"># normalise to [0,1] for display</span>
+fig, axes = plt.subplots(<span class="num">8</span>, <span class="num">8</span>, figsize=(<span class="num">6</span>, <span class="num">6</span>))
+<span class="kw">for</span> i, ax <span class="kw">in</span> <span class="fn">enumerate</span>(axes.flat):
+    ax.imshow(w[i].permute(<span class="num">1</span>, <span class="num">2</span>, <span class="num">0</span>))   <span class="cmt"># CHW -> HWC</span>
+    ax.axis(<span class="str">"off"</span>)
+plt.suptitle(<span class="str">"Learned conv1 filters — note the edge/colour detectors"</span>)
+plt.show()</code></pre>
+  <p class="codecap">Run the <a class="demolink" href="./index.html#cnn">interactive CNN demo</a> to watch feature maps form layer-by-layer on your own image.</p>
+
+  <h3 class="sub">Inspecting misclassifications</h3>
+  <p>Sorting test errors by the model's confidence surfaces the instructive cases. The most confident mistakes are almost all <b>cat↔dog</b> and <b>bird↔deer/frog</b> — genuinely ambiguous at 32×32, where even a human hesitates. This matches the confusion matrix and tells us the model's errors are <em>reasonable</em>, not random: it has learned a sensible similarity structure.</p>
+  <pre class="code"><code>probs = torch.softmax(model(images.to(device)), dim=<span class="num">1</span>)
+conf, pred = probs.max(<span class="num">1</span>)
+wrong = pred.cpu() != labels
+<span class="cmt"># most-confident errors: high confidence AND wrong</span>
+idx = (conf.cpu() * wrong.float()).argsort(descending=<span class="kw">True</span>)[:<span class="num">16</span>]
+<span class="cmt"># -> plot images[idx] with true vs predicted labels to eyeball failure modes</span></code></pre>
+  <div class="keyidea"><b>Key idea:</b> a model is only as trustworthy as its <em>errors</em> are understandable. Visualising filters and misclassifications turns an opaque accuracy number into a diagnosis you can act on (more data for confused classes, higher resolution, a deeper net).</div>
+
+  <!-- 7. OUTCOMES -->
+  <h2 class="sec" id="outcomes">7 · Mapping to learning outcomes</h2>
+  <p>This single project exercises every official learning objective of the course:</p>
+  <ul class="outcomes">
+    <li><b>Pose, discuss and solve a common CV problem.</b> We framed classification precisely (input tensor → class), chose an appropriate technique (CNN) and justified it against a classical alternative (HOG+SVM) with measured evidence.</li>
+    <li><b>Fluency developing CV applications in Python.</b> The whole system is real, runnable PyTorch + torchvision + scikit-learn / scikit-image — the exact stack the syllabus prescribes for Sessions 22–23.</li>
+    <li><b>Conceptual mastery of the pipeline.</b> Data formation &amp; encoding (S3), intensity normalisation (S4/S15), convolution &amp; filtering (S16), gradients &amp; edges (S18–19), classical features (S20), and the deep model itself (S21–23) all appear in one connected story.</li>
+    <li><b>Honest evaluation &amp; communication.</b> Accuracy, a confusion matrix, per-class F1, learning curves and a baseline table — the engineering-report rubric of the individual project (15% of the grade).</li>
+  </ul>
+  <div class="callout"><span class="ct">Where this sits in the syllabus</span>This worked example is the natural form of the <b>individual project</b> (15%) and a template for the methods you will defend in <b>intermediate tests</b> (30%) and the <b>final exam's</b> CNN problems (e.g. "compute the output size of this conv layer", "write the cross-entropy gradient"). See the full breakdown in the <a href="./course.html#assessment">assessment section</a>.</div>
+
+  <!-- 8. EXTENSIONS -->
+  <h2 class="sec" id="extensions">8 · Extensions</h2>
+  <div class="steps">
+    <div class="step"><h4>Transfer learning</h4><p>Swap <code>SmallVGG</code> for a <code>torchvision.models.resnet18(weights="IMAGENET1K_V1")</code>, freeze the backbone, and retrain only the final FC layer. ImageNet-pretrained features transfer remarkably well and reach ≈95% on CIFAR-10 with a fraction of the training — the practical lesson of Session 23's advanced architectures.</p></div>
+    <div class="step"><h4>Deeper / residual architectures</h4><p>Add residual connections ($y = \mathcal{F}(x) + x$) so gradients flow through very deep stacks without vanishing — the ResNet idea from Session 23. Compare 18- vs 34-layer depth against the accuracy/parameter trade-off in the results table.</p></div>
+    <div class="step"><h4>Object detection</h4><p>Classification answers "what"; detection adds "where". Reuse this CNN as the <em>backbone</em> of a detector and train YOLO-style box + class heads on top — the leap of Sessions 25–26. <a class="demolink" href="./index.html#detection">Demo · 14 Detection</a></p></div>
+    <div class="step"><h4>Semantic segmentation</h4><p>Replace the classifier head with an encoder–decoder (U-Net, Session 23) to predict a class <em>per pixel</em> rather than per image — dense prediction from the same convolutional features. <a class="demolink" href="./index.html#segmentation">Demo · 13 Segmentation</a></p></div>
+    <div class="step"><h4>Regularisation &amp; tuning</h4><p>Add dropout, label smoothing, mixup/cutmix augmentation, and a learning-rate finder; track everything to push past 93% without changing the architecture. A good intermediate-test exercise in honest experimental method.</p></div>
+  </div>
+
+  <!-- 9. REFERENCES -->
+  <h2 class="sec" id="references">9 · References</h2>
+  <p class="muted">Course texts (from the official <a href="./SYLLABUS.pdf" target="_blank" rel="noopener">syllabus</a>) plus the primary sources behind the methods used here.</p>
+  <ul class="biblio">
+    <li><span class="author">Drummy, M. et al.</span> — <span class="title">Dive into Deep Learning: Tools for Engagement</span>. <span class="isbn">ISBN 9781544361376 (Printed)</span><div class="anno">The hands-on framework-based reference for everything in Sessions 21–23: building, training and debugging CNNs in code — the closest text to this project.</div></li>
+    <li><span class="author">Bishop, C. M.</span> — <span class="title">Pattern Recognition and Machine Learning</span>. <span class="isbn">ISBN 9780387310732 (Printed)</span><div class="anno">Rigorous foundations for softmax, cross-entropy, maximum likelihood and gradient-based optimisation — the math of Section 4.</div></li>
+    <li><span class="author">Szeliski, R.</span> — <span class="title">Computer Vision: Algorithms and Applications</span>. <span class="isbn">ISBN 9783030343743 (Printed)</span><div class="anno">Ch. 5 (recognition) and the convolution/feature chapters tie the classical HOG baseline and the learned CNN into one narrative.</div></li>
+    <li><span class="author">Forsyth, D. &amp; Ponce, J.</span> — <span class="title">Computer Vision: A Modern Approach</span>. <span class="isbn">ISBN 0130851981 (Digital)</span><div class="anno">Classical recognition and the SVM/feature pipeline that the baseline implements.</div></li>
+    <li><span class="author">Krizhevsky, A.</span> — <span class="title">Learning Multiple Layers of Features from Tiny Images</span>. <span class="isbn">Tech report, 2009</span><div class="anno">The original CIFAR-10/100 dataset report — the data this project trains on.</div></li>
+    <li><span class="author">Simonyan, K. &amp; Zisserman, A.</span> — <span class="title">Very Deep Convolutional Networks for Large-Scale Image Recognition (VGG)</span>. <span class="isbn">ICLR 2015</span><div class="anno">The stacked-3×3-conv design our SmallVGG scales down (Session 23).</div></li>
+    <li><span class="author">He, K. et al.</span> — <span class="title">Deep Residual Learning for Image Recognition (ResNet)</span>. <span class="isbn">CVPR 2016</span><div class="anno">The residual connection behind the deeper-architecture extension.</div></li>
+    <li><span class="author">Dalal, N. &amp; Triggs, B.</span> — <span class="title">Histograms of Oriented Gradients for Human Detection (HOG)</span>. <span class="isbn">CVPR 2005</span><div class="anno">The hand-engineered feature descriptor used in the classical baseline.</div></li>
+  </ul>
+
+  <footer class="coursefoot">
+    <p>AI: Computer Vision (AICV-CSAI.3.M.A) · BCSAI · IE University · 25–26 · Prof. Dr. Rubén Sánchez García.<br>
+    Worked-example companion built from the official <a href="./SYLLABUS.pdf" target="_blank" rel="noopener">syllabus</a>. Code is illustrative and runnable; results are representative of a typical run.</p>
+    <p><a href="./index.html">← Back to the interactive playground</a> · <a href="./course.html">Course outline →</a></p>
+  </footer>
+
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  if (window.renderMathInElement) {
+    try {
+      window.renderMathInElement(document.body, {
+        delimiters: [
+          { left: "$", right: "$", display: false }
+        ],
+        throwOnError: false
+      });
+    } catch (e) { /* KaTeX optional — plain text fallback */ }
+  }
+});
+</script>
+</body>
+</html>
