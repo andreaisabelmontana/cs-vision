@@ -4,117 +4,15 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Worked Project — Image Classification with a CNN · CS Vision</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
 <link rel="stylesheet" href="./css/styles.css" />
+<link rel="stylesheet" href="./css/pages.css" />
 <!-- KaTeX (optional) — formulas degrade to readable plain text if it fails to load -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css" crossorigin="anonymous" />
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js" crossorigin="anonymous"></script>
 <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js" crossorigin="anonymous"></script>
-<style>
-/* ── project-page-only additions; reuse the dark theme from styles.css and the course-page idiom ── */
-.course-wrap{max-width:1080px;margin:0 auto;padding:22px}
-.course-hero{background:linear-gradient(135deg,#161b22,#1c2230);border:1px solid var(--border);
-  border-radius:12px;padding:26px 28px;margin-bottom:20px}
-.course-hero h1{margin:0 0 6px;font-size:26px;color:var(--text);letter-spacing:.3px}
-.course-hero .tagline{color:var(--muted);font-size:14px;margin:0 0 14px}
-.course-hero .hero-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
-
-.coursenav{position:sticky;top:50px;z-index:15;background:#0a0e14ee;backdrop-filter:blur(6px);
-  border-bottom:1px solid var(--border);padding:8px 14px;display:flex;gap:6px;flex-wrap:wrap;
-  margin:-22px -22px 20px;align-items:center}
-.coursenav a{font-size:12px;color:var(--muted);padding:5px 9px;border-radius:6px;white-space:nowrap}
-.coursenav a:hover{background:var(--panel2);color:var(--accent);text-decoration:none}
-.coursenav .nav-sep{flex:1}
-.coursenav a.back{border:1px solid var(--border);color:var(--text)}
-.coursenav a.pdf{border:1px solid var(--accent);color:var(--accent)}
-
-.metagrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:14px}
-.metagrid .mcell{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:10px 12px}
-.metagrid .mcell .k{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--accent2)}
-.metagrid .mcell .v{font-size:14px;color:var(--text);margin-top:3px}
-
-h2.sec{font-size:20px;color:var(--accent);border-bottom:1px solid var(--border);
-  padding-bottom:8px;margin:34px 0 14px;scroll-margin-top:96px}
-h3.sub{color:var(--accent2);font-size:14px;margin:18px 0 8px}
-
-.objlist{list-style:none;padding:0;margin:10px 0;display:grid;gap:8px}
-.objlist li{background:var(--panel2);border:1px solid var(--border);border-left:3px solid var(--accent2);
-  border-radius:6px;padding:9px 12px;font-size:13.5px}
-
-.callout{background:#15233a;border:1px solid #284268;border-left:4px solid var(--accent);
-  border-radius:6px;padding:10px 14px;margin:14px 0;font-size:13px}
-.callout.warn{background:#2a1d1d;border-color:#5a2d2d;border-left-color:var(--danger)}
-.callout .ct{font-weight:600;color:var(--accent);display:block;margin-bottom:4px;font-size:12px;text-transform:uppercase;letter-spacing:.5px}
-.callout.warn .ct{color:var(--danger)}
-
-.fmla{font-family:Consolas,monospace;background:#0d1117;border:1px solid var(--border);border-radius:6px;
-  padding:7px 10px;margin:8px 0;color:var(--accent2);font-size:12.5px;overflow-x:auto}
-.keyidea{background:#15233a;border-left:3px solid var(--accent2);border-radius:5px;padding:8px 12px;
-  margin:8px 0;font-size:12.5px;color:#dbe6f0}
-.keyidea b{color:var(--accent2)}
-
-.demolink{display:inline-block;margin:6px 6px 0 0;font-size:12px;padding:4px 9px;border-radius:6px;
-  background:var(--panel2);border:1px solid var(--accent);color:var(--accent)}
-.demolink:hover{background:var(--accent);color:#0d1117;text-decoration:none}
-
-/* code blocks — scoped to this page */
-pre.code{background:#0a0e14;border:1px solid var(--border);border-radius:8px;
-  padding:14px 16px;margin:12px 0;overflow-x:auto;font-size:12.5px;line-height:1.55}
-pre.code code{background:none;padding:0;border-radius:0;color:#c9d1d9;
-  font-family:Consolas,"SF Mono",Menlo,monospace;white-space:pre}
-.code .cmt{color:#6e7781;font-style:italic}
-.code .kw{color:#ff7b72}
-.code .str{color:#a5d6ff}
-.code .fn{color:#d2a8ff}
-.code .num{color:#79c0ff}
-.code .nd{color:#d2a8ff}
-.codecap{font-size:11px;color:var(--muted);margin:-6px 0 14px;padding-left:2px}
-.codecap b{color:var(--accent2)}
-
-/* pipeline / step grid */
-.steps{counter-reset:step;display:grid;gap:12px;margin:14px 0}
-.step{position:relative;background:var(--panel2);border:1px solid var(--border);border-radius:8px;
-  padding:12px 14px 12px 46px}
-.step::before{counter-increment:step;content:counter(step);position:absolute;left:12px;top:12px;
-  width:22px;height:22px;border-radius:50%;background:var(--accent);color:#0d1117;font-weight:700;
-  font-size:12px;display:flex;align-items:center;justify-content:center}
-.step h4{margin:0 0 4px;font-size:14px;color:var(--text)}
-.step p{margin:4px 0;font-size:12.5px;color:#c9d1d9}
-
-/* results / metrics tables */
-table.rtable{width:100%;border-collapse:collapse;margin:12px 0;font-size:13px}
-table.rtable th,table.rtable td{border:1px solid var(--border);padding:8px 10px;text-align:left}
-table.rtable th{background:var(--panel2);color:var(--accent2);font-size:11px;text-transform:uppercase;letter-spacing:.5px}
-table.rtable td b{color:var(--text)}
-table.rtable td.num{font-family:Consolas,monospace;text-align:right;color:var(--accent)}
-table.rtable tr.best td{background:#15233a}
-
-/* confusion matrix */
-.cm-wrap{overflow-x:auto;margin:12px 0}
-table.cm{border-collapse:collapse;font-family:Consolas,monospace;font-size:11px}
-table.cm th,table.cm td{border:1px solid var(--border);padding:5px 7px;text-align:center;min-width:30px}
-table.cm th{background:var(--panel2);color:var(--accent2)}
-table.cm td.diag{color:#0d1117;font-weight:700}
-table.cm .axis{color:var(--muted);font-size:10px;text-transform:uppercase;letter-spacing:.5px}
-
-/* ascii curve box */
-.curvebox{font-family:Consolas,monospace;background:#0a0e14;border:1px solid var(--border);
-  border-radius:8px;padding:12px 14px;margin:12px 0;color:var(--accent2);font-size:11.5px;
-  line-height:1.4;overflow-x:auto;white-space:pre}
-
-.outcomes{margin:10px 0;padding:0;list-style:none;display:grid;gap:6px}
-.outcomes li{font-size:13px;color:#c9d1d9;padding-left:18px;position:relative}
-.outcomes li::before{content:"▸";position:absolute;left:0;color:var(--accent2)}
-
-.biblio{list-style:none;padding:0;margin:14px 0;display:grid;gap:12px}
-.biblio li{background:var(--panel2);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-size:13px}
-.biblio .title{color:var(--text);font-weight:600;font-style:italic}
-.biblio .author{color:var(--accent2)}
-.biblio .isbn{font-family:Consolas,monospace;font-size:11px;color:var(--muted)}
-.biblio .anno{margin-top:6px;font-size:12.5px;color:#c9d1d9}
-
-.coursefoot{border-top:1px solid var(--border);margin-top:36px;padding:20px 0 8px;color:var(--muted);font-size:12px;text-align:center}
-.coursefoot a{color:var(--accent)}
-</style>
 </head>
 <body>
 
